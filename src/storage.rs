@@ -63,6 +63,7 @@ impl Storage {
         Ok(())
     }
 
+    #[allow(dead_code)]
     pub fn get_setting(&self, key: &str) -> Result<Option<String>> {
         let mut stmt = self
             .conn
@@ -76,6 +77,7 @@ impl Storage {
         }
     }
 
+    #[allow(dead_code)]
     pub fn insert_memory(&self, category: &str, key: &str, value: &str) -> Result<i64> {
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)

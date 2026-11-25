@@ -1,7 +1,6 @@
 use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
 
-pub const APP_NAME: &str = "JARVIS";
 pub const DATA_DIR_NAME: &str = ".jarvis";
 
 #[derive(Debug, Clone)]

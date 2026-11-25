@@ -42,6 +42,8 @@ slint::slint! {
         callback save-nvidia(string);
         callback save-gemini(string);
         callback test-nvidia();
+        callback test-gemini();
+        callback delete-nvidia();
         callback category-changed(int);
         callback save-route(int, int);
         callback save-ai(string, string);
@@ -189,6 +191,8 @@ slint::slint! {
                             HorizontalBox {
                                 Button { text: "Save NVIDIA key"; clicked => { root.save-nvidia(nvidia-key.text); } }
                                 Button { text: "Test NVIDIA"; clicked => { root.test-nvidia(); } }
+                                Button { text: "Test Gemini"; clicked => { root.test-gemini(); } }
+                                Button { text: "Delete NVIDIA key"; clicked => { root.delete-nvidia(); } }
                             }
                             HorizontalBox {
                                 Text { text: "Base URL"; width: 140px; }
@@ -434,6 +438,55 @@ pub fn run() -> Result<()> {
         });
     });
 
+    // Test Gemini callback.
+    let weak_cb = weak.clone();
+    ui.on_test_gemini(move || {
+        let weak = weak_cb.clone();
+        std::thread::spawn(move || {
+            let key = match credentials::get_api_key("gemini") {
+                Ok(Some(k)) => k,
+                Ok(None) => {
+                    if let Some(ui) = weak.upgrade() {
+                        ui.set_status("No Gemini key stored.".into());
+                    }
+                    return;
+                }
+                Err(e) => {
+                    if let Some(ui) = weak.upgrade() {
+                        ui.set_status(format!("Credential read failed: {e:#}").into());
+                    }
+                    return;
+                }
+            };
+            let provider = crate::providers::GeminiProvider {
+                api_key: key,
+                model: "gemini-2.0-flash".to_string(),
+            };
+            let msg = match provider.chat("You are JARVIS.", "Reply with: ready") {
+                Ok(text) => format!("Gemini OK: {}", text.trim()),
+                Err(e) => format!("Gemini test failed: {e:#}"),
+            };
+            if let Some(ui) = weak.upgrade() {
+                ui.set_status(msg.into());
+            }
+        });
+    });
+
+    // Delete NVIDIA key callback.
+    let weak_cb = weak.clone();
+    ui.on_delete_nvidia(move || {
+        let weak = weak_cb.clone();
+        std::thread::spawn(move || {
+            let msg = match credentials::delete_api_key("nvidia") {
+                Ok(()) => "NVIDIA key deleted.".to_string(),
+                Err(e) => format!("Delete failed: {e:#}"),
+            };
+            if let Some(ui) = weak.upgrade() {
+                ui.set_status(msg.into());
+            }
+        });
+    });
+
     let weak_cb = weak.clone();
     ui.on_category_changed(move |idx| {
         let models = models_for_category(idx as usize);
@@ -633,29 +686,24 @@ pub fn run() -> Result<()> {
         });
     });
 
-    let weak_cb = weak.clone();
     ui.on_open_data_folder(move || {
         open_path(paths::data_root().ok().map(|p| p.display().to_string()))
     });
-    let weak_cb = weak.clone();
     ui.on_open_config_file(move || {
         if let Ok(p) = paths::default_paths() {
             open_path(Some(p.config.display().to_string()));
         }
     });
-    let weak_cb = weak.clone();
     ui.on_open_logs_folder(move || {
         if let Ok(p) = paths::default_paths() {
             open_path(Some(p.logs.display().to_string()));
         }
     });
-    let weak_cb = weak.clone();
     ui.on_open_plugins_folder(move || {
         if let Ok(p) = paths::default_paths() {
             open_path(Some(p.plugins.display().to_string()));
         }
     });
-    let weak_cb = weak.clone();
     ui.on_open_memory_folder(move || {
         if let Ok(p) = paths::default_paths() {
             open_path(Some(p.memory.display().to_string()));

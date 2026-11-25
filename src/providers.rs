@@ -2,15 +2,7 @@ use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 
 pub trait AiProvider: Send + Sync {
-    fn name(&self) -> &str;
     fn chat(&self, system: &str, user: &str) -> Result<String>;
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub enum ProviderKind {
-    Nvidia { model: String, base_url: String },
-    Gemini { model: String },
-    OpenAiCompatible { model: String, base_url: String },
 }
 
 pub struct NvidiaProvider {
@@ -20,9 +12,6 @@ pub struct NvidiaProvider {
 }
 
 impl AiProvider for NvidiaProvider {
-    fn name(&self) -> &str {
-        "nvidia"
-    }
     fn chat(&self, system: &str, user: &str) -> Result<String> {
         #[derive(Serialize)]
         struct Msg {
@@ -88,9 +77,6 @@ pub struct GeminiProvider {
 }
 
 impl AiProvider for GeminiProvider {
-    fn name(&self) -> &str {
-        "gemini"
-    }
     fn chat(&self, system: &str, user: &str) -> Result<String> {
         #[derive(Serialize)]
         struct Part {
