@@ -21,6 +21,17 @@ Acceptance criteria:
 - [ ] SQLite foundation (rusqlite bundled) + migrations.
 - [ ] Code signing decision.
 
+## Proposed: Rust-native UI migration (Task 005, not yet approved)
+
+Status: Proposed. See `docs/ARCHITECTURE_DECISION.md` and
+`docs/rust-architecture-pack/`. This is an architecture change that
+conflicts with the current Tauri 2 commitment and requires explicit
+project-owner approval before implementation.
+
+- Task 005A: Native UI proof of concept (Slint vs egui), no WebView2.
+- Task 005B: Benchmark and select UI on the target PC.
+- Task 005C: Native foundation migration, preserving Tauri app until parity.
+
 ## Phase 2 — NVIDIA AI provider (planned)
 
 - Provider trait + NVIDIA NIM adapter.
