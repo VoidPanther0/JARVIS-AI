@@ -8,7 +8,7 @@ slint::slint! {
     export component MainWindow inherits Window {
         title: "JARVIS AI";
         width: 560px;
-        height: 420px;
+        height: 500px;
         in-out property <string> status: "Ready. Enter an API key and save.";
         callback save_nvidia(string);
         callback save_gemini(string);
@@ -16,8 +16,14 @@ slint::slint! {
         VerticalBox {
             padding: 16px;
             spacing: 10px;
-            Text { text: "JARVIS AI"; font-size: 24px; }
-            Text { text: "Rust-native Windows assistant. Secrets live in Windows Credential Manager."; }
+            HorizontalBox {
+                Image { source: @image-url("../assets/jarvis.svg"); width: 96px; height: 96px; }
+                VerticalBox {
+                    Text { text: "JARVIS AI"; font-size: 24px; }
+                    Text { text: "Rust-native Windows assistant"; }
+                    Text { text: "Secrets are stored in Windows Credential Manager."; }
+                }
+            }
             HorizontalBox {
                 Text { text: "NVIDIA API key"; width: 130px; }
                 nvidia := LineEdit { placeholder-text: "nvapi-..."; }
@@ -94,7 +100,7 @@ pub fn run() -> Result<()> {
             };
             let provider = crate::providers::NvidiaProvider {
                 api_key: key,
-                model: "meta/llama-3.1-8b-instruct".to_string(),
+                model: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning".to_string(),
                 base_url: "https://integrate.api.nvidia.com/v1".to_string(),
             };
             let msg = match provider.chat("You are JARVIS.", "Reply with: ready") {
