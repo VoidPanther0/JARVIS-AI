@@ -86,7 +86,7 @@ and obtaining project-owner approval.
   -----------------------------------------------------------------------
   Phase                   Scope                   Status
   ----------------------- ----------------------- -----------------------
-  1                       Desktop foundation, UI, In progress / not yet
+  1                       Desktop foundation, UI, In progress - foundation
                           Rust communication,     verified
                           SQLite foundation,      
                           stability               
