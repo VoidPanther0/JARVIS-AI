@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "cacheTag": "cpython-311",
+  "magic": "a70d0d0a",
+  "invalidation": "unchecked-hash",
+  "python": "3.11.15",
+  "roots": [
+    "stonic-voice",
+    "voice-runtime/venv/Lib/site-packages",
+    "python-runtime/python/Lib"
+  ],
+  "budget": 164,
+  "compiled": 8977,
+  "skipped": {
+    "budget": 30,
+    "excluded": 6
+  },
+  "failed": 0,
+  "failures": [],
+  "seconds": 14.9,
+  "verified": {
+    "loaded": 4476,
+    "fromBytecode": 4456,
+    "longPath": 20,
+    "excluded": 0,
+    "missing": 0,
+    "missingExamples": [],
+    "importSeconds": 15.89
+  },
+  "builtAt": "2026-11-24T14:40:06.729Z"
+}

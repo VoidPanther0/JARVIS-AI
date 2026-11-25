@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="./logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Inter, network se — magar JAAN BUJH KAR non-blocking.
+       Ek aam <link rel="stylesheet"> render-blocking hota hai: Chromium
+       pehla paint tab tak rokta hai jab tak fonts.googleapis.com jawab na de.
+       Desktop app offline bhi chalti hai, aur client ki machine par slow DNS,
+       captive portal ya corporate proxy is intezaar ko kai second ka bana
+       deta hai — sirf ek font ke liye, jabki app khud disk par maujood hai.
+       `media="print"` browser ko batata hai ke ye screen ke liye zaroori nahi,
+       is liye wo paint rok kar nahi baithta; utarte hi onload ise `all` kar
+       deta hai aur font apni jagah aa jata hai. URL mein `display=swap`
+       pehle se hai, is liye text kabhi ghaib nahi hota — fallback font mein
+       likha rehta hai aur phir Inter par badal jata hai. -->
+  <link rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+  <title>Stonic Desktop</title>
+  <script type="module" crossorigin src="./assets/index-jctDx1f9.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/icons-DBEHCk3H.js">
+  <link rel="modulepreload" crossorigin href="./assets/markdown-BE2dNmuO.js">
+  <link rel="modulepreload" crossorigin href="./assets/react-iPBG5svX.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-CnqAhXdy.css">
+</head>
+
+<body>
+  <div id="root"></div>
+</body>
+
+</html>
