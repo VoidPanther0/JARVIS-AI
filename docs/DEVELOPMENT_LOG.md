@@ -58,4 +58,28 @@
 - Code signing not configured.
 
 ### Next milestone
-Phase 1 continuation: SQLite foundation (rusqlite bundled) + migrations, then CI workflow (GitHub Actions).
+Phase 1 continuation: SQLite foundation (rusqlite bundled) + migrations.
+
+## 2026-11-25 — Task 004: GitHub Actions CI
+
+### Commands executed
+1. Created .github/workflows/ci.yml.
+2. Validated YAML with Python (PyYAML safe_load) — parsed OK; triggers (push main, pull_request main, workflow_dispatch), permissions (contents: read), job build (windows-latest) confirmed.
+
+### Workflow details
+- Runner: windows-latest, timeout 60 min.
+- Rust: dtolnay/rust-toolchain@stable, target x86_64-pc-windows-msvc.
+- Node: 26 (actions/setup-node@v4, npm cache).
+- Caching: swatinem/rust-cache@v2 (workspaces: src-tauri), npm cache.
+- Steps: checkout, setup-node, setup-rust, rust-cache, npm ci, npm run build, cargo fmt --check, cargo check, cargo test, npm run tauri build, upload-artifact (MSI + NSIS, retention 14 days).
+- Permissions: contents: read only. No secrets. No release publishing.
+- Concurrency: cancel in-progress runs per branch/PR.
+
+### Local validation
+- YAML syntax: valid (PyYAML).
+- Remote GitHub Actions run: NOT executed; cannot be verified locally. The workflow must be triggered on push/PR to confirm.
+
+### Known limitations
+- No code signing.
+- No release publishing (planned for a separate release workflow).
+- Artifact retention 14 days.
