@@ -2324,6 +2324,7 @@ dependencies = [
  "serde_json",
  "slint",
  "thiserror 1.0.69",
+ "toml",
  "tracing",
  "tracing-subscriber",
 ]

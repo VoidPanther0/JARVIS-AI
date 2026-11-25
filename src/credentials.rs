@@ -33,7 +33,10 @@ mod tests {
     #[test]
     fn roundtrip() {
         set_api_key("test-provider", "secret-value").unwrap();
-        assert_eq!(get_api_key("test-provider").unwrap(), Some("secret-value".to_string()));
+        assert_eq!(
+            get_api_key("test-provider").unwrap(),
+            Some("secret-value".to_string())
+        );
         delete_api_key("test-provider").unwrap();
         assert_eq!(get_api_key("test-provider").unwrap(), None);
     }
