@@ -4,7 +4,7 @@
 //  Packaged app:  resources/python-runtime/python   (scripts/setup-python-runtime.js)
 //  Dev machine:   <repo>/python-runtime/python
 //
-//  voice-runtime/ (Maya Voice engine) and computer-runtime/ (computer-use
+//  voice-runtime/ (Stonic Voice engine) and computer-runtime/ (computer-use
 //  sidecar) are relocatable venvs built on it. A venv's pyvenv.cfg stores the
 //  interpreter's folder (`home`) as an ABSOLUTE path — the build machine's —
 //  so on first boot it is rewritten to wherever the app was installed. If the
@@ -12,7 +12,7 @@
 //  directly instead, so the app never depends on writing into its own folder.
 //
 //  (Until Nov 2026 this interpreter lived inside hermes-runtime/. Hermes was
-//  removed from Maya; the interpreter stays on its own.)
+//  removed from Stonic; the interpreter stays on its own.)
 // ═══════════════════════════════════════════════════════════════
 
 'use strict';
@@ -62,7 +62,7 @@ function samePath(a, b) {
  * File UTF-8 mein likhi jati hai, kyunke Python (venv redirector, getpath, site.py)
  * usay UTF-8 hi parhta hai. Pehle yahan 'ascii' tha: jis user ke Windows naam mein
  * English ke ilawa koi harf ho (maslan Urdu), us ka raasta bigar kar likha jata aur
- * Maya Voice chal hi nahi sakti thi.
+ * Stonic Voice chal hi nahi sakti thi.
  *
  * @param {string} venvRoot  wo folder jis mein venv/ hai (voice-runtime / computer-runtime)
  * @param {string} label     log ke liye
@@ -106,7 +106,7 @@ const launcherFallbacks = new Map();
  *                    pyvenv.cfg ka `home` bundled interpreter par ho (relocateVenvStatus).
  *   mode 'launcher'  pyvenv.cfg purana hai aur install folder usay theek nahi karne
  *                    deta. Venv ka redirector (Scripts\python.exe) purane `home` par
- *                    "No Python at …" keh kar mar jata — Maya Voice ka "missing
+ *                    "No Python at …" keh kar mar jata — Stonic Voice ka "missing
  *                    from this copy" isi se aata tha. Is liye bundled interpreter ko
  *                    seedha chalao aur venv ka pata __PYVENV_LAUNCHER__ se do: yahi
  *                    hand-off CPython ka apna venv redirector aur multiprocessing

@@ -30,7 +30,7 @@ const GDELT_DOC_API = 'https://api.gdeltproject.org/api/v2/doc/doc';
 const ATTRIBUTION = 'GDELT Project';
 const ATTRIBUTION_URL = 'https://www.gdeltproject.org/';
 // Seedha naam, koi user / machine ki maloomat nahi.
-const USER_AGENT = 'MayaAI-Desktop/WorldFeed';
+const USER_AGENT = 'StonicAI-Desktop/WorldFeed';
 
 const DEFAULTS = Object.freeze({
   ttlMs: 4 * 60 * 60 * 1000,

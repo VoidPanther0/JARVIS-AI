@@ -34,7 +34,7 @@ const fs = require('fs');
 const os = require('os');
 
 const PREFIX = '[macOS Updater]';
-const DEFAULT_FEED_URL = 'https://download.mayaai.com';
+const DEFAULT_FEED_URL = 'https://download.stonicai.com';
 const CHANNEL_FILE = 'latest-mac.yml';
 
 const log = {
@@ -146,7 +146,7 @@ function execFileP(cmd, args, opts = {}) {
 
 /** Running .app bundle path, derived from the executable path. */
 function getCurrentAppBundlePath() {
-  // .../Maya AI.app/Contents/MacOS/Maya AI → .../Maya AI.app
+  // .../Stonic AI.app/Contents/MacOS/Stonic AI → .../Stonic AI.app
   const exe = process.execPath;
   const idx = exe.indexOf('.app/Contents/');
   if (idx === -1) return null;
@@ -193,7 +193,7 @@ async function downloadUpdate(info, feed) {
   if (!info) throw new Error('No update info — call check first');
   state.downloading = true;
 
-  const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'maya-update-'));
+  const workDir = fs.mkdtempSync(path.join(os.tmpdir(), 'stonic-update-'));
   const zipPath = path.join(workDir, 'update.zip');
 
   try {
@@ -282,12 +282,12 @@ async function quitAndInstall() {
     // macOS runs quarantined apps from a randomized read-only mount.
     dialog.showMessageBoxSync({
       type: 'info',
-      message: 'Please move Maya AI to the Applications folder first, then update again.',
+      message: 'Please move Stonic AI to the Applications folder first, then update again.',
     });
     return;
   }
 
-  const backupPath = path.join(os.tmpdir(), `maya-old-${Date.now()}.app`);
+  const backupPath = path.join(os.tmpdir(), `stonic-old-${Date.now()}.app`);
   try {
     log.info(`Installing ${pending.version}: swapping ${currentApp}`);
     // 1. Move the running bundle aside (allowed on macOS while running)

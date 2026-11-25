@@ -35,11 +35,11 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const COMMAND_ENV_VAR = 'MAYA_OS_EXEC_COMMAND';
+const COMMAND_ENV_VAR = 'STONIC_OS_EXEC_COMMAND';
 const PS_EXIT_PARSE_ERROR = 97;
 const PS_EXIT_NOT_FOUND = 98;
-const PARSE_ERROR_MARKER = 'MAYA_PARSE_ERROR:';
-const NOT_FOUND_MARKER = 'MAYA_NOT_FOUND:';
+const PARSE_ERROR_MARKER = 'STONIC_PARSE_ERROR:';
+const NOT_FOUND_MARKER = 'STONIC_NOT_FOUND:';
 
 const MAX_CAPTURE_BYTES = 1024 * 1024;
 // Process exit ke baad itna intezar taake pipe mein bacha output aa jaye.
@@ -56,21 +56,21 @@ const MIN_FALLBACK_BUDGET_MS = 3000;
 const POWERSHELL_WRAPPER = [
   "$ProgressPreference='SilentlyContinue'",
   'try{[Console]::OutputEncoding=[Text.Encoding]::UTF8}catch{}',
-  `$__mayaSrc=[Environment]::GetEnvironmentVariable('${COMMAND_ENV_VAR}')`,
+  `$__stonicSrc=[Environment]::GetEnvironmentVariable('${COMMAND_ENV_VAR}')`,
   `[Environment]::SetEnvironmentVariable('${COMMAND_ENV_VAR}',$null)`,
-  '$__mayaTok=$null',
-  '$__mayaErr=$null',
-  '$__mayaAst=[Management.Automation.Language.Parser]::ParseInput($__mayaSrc,[ref]$__mayaTok,[ref]$__mayaErr)',
-  `if($__mayaErr.Count -gt 0){[Console]::Error.WriteLine('${PARSE_ERROR_MARKER} '+$__mayaErr[0].Message);exit ${PS_EXIT_PARSE_ERROR}}`,
-  '$__mayaFns=@($__mayaAst.FindAll({param($n)$n -is [Management.Automation.Language.FunctionDefinitionAst]},$true)|ForEach-Object{$_.Name})',
-  '$__mayaFirst=$__mayaAst.Find({param($n)$n -is [Management.Automation.Language.CommandAst]},$true)',
-  `if($__mayaFirst){$__mayaName=$__mayaFirst.GetCommandName();if($__mayaName -and ($__mayaFns -notcontains $__mayaName) -and -not (Get-Command -Name $__mayaName -ErrorAction SilentlyContinue)){[Console]::Error.WriteLine('${NOT_FOUND_MARKER} '+$__mayaName);exit ${PS_EXIT_NOT_FOUND}}}`,
+  '$__stonicTok=$null',
+  '$__stonicErr=$null',
+  '$__stonicAst=[Management.Automation.Language.Parser]::ParseInput($__stonicSrc,[ref]$__stonicTok,[ref]$__stonicErr)',
+  `if($__stonicErr.Count -gt 0){[Console]::Error.WriteLine('${PARSE_ERROR_MARKER} '+$__stonicErr[0].Message);exit ${PS_EXIT_PARSE_ERROR}}`,
+  '$__stonicFns=@($__stonicAst.FindAll({param($n)$n -is [Management.Automation.Language.FunctionDefinitionAst]},$true)|ForEach-Object{$_.Name})',
+  '$__stonicFirst=$__stonicAst.Find({param($n)$n -is [Management.Automation.Language.CommandAst]},$true)',
+  `if($__stonicFirst){$__stonicName=$__stonicFirst.GetCommandName();if($__stonicName -and ($__stonicFns -notcontains $__stonicName) -and -not (Get-Command -Name $__stonicName -ErrorAction SilentlyContinue)){[Console]::Error.WriteLine('${NOT_FOUND_MARKER} '+$__stonicName);exit ${PS_EXIT_NOT_FOUND}}}`,
   '$global:LASTEXITCODE=0',
   // `| Out-Default` zaroori hai: is ke baghair neeche wala `exit` PowerShell ko
   // table (Get-PSDrive, Select-Object) chhaapne se pehle band kar deta tha aur
   // output khali aata tha. Out-String/Out-Null NAHI: un mein PowerShell GUI app
   // ke band hone ka intezar karta hai (`notepad | Out-Null` wala asar).
-  'try{& ([scriptblock]::Create($__mayaSrc)) | Out-Default}catch{[Console]::Error.WriteLine($_.Exception.Message);exit 1}',
+  'try{& ([scriptblock]::Create($__stonicSrc)) | Out-Default}catch{[Console]::Error.WriteLine($_.Exception.Message);exit 1}',
   'if($global:LASTEXITCODE -is [int] -and $global:LASTEXITCODE -ne 0){exit $global:LASTEXITCODE}',
   'exit 0',
 ].join(';');
@@ -280,7 +280,7 @@ const hintFor = ({ text, timedOut, timeoutMs }) => {
     return `The command was still running after ${Math.round(timeoutMs / 1000)}s and was stopped. Narrow it (a smaller folder, -First 20, fewer items) or hand long jobs to an agent.`;
   }
   const lower = String(text || '').toLowerCase();
-  if (/is not recognized as (?:the name of a cmdlet|an internal or external command)|maya_not_found/.test(lower)) {
+  if (/is not recognized as (?:the name of a cmdlet|an internal or external command)|stonic_not_found/.test(lower)) {
     return 'That program or command name does not exist on this PC. For an installed app use Start-Process with its real name or full .exe path; for a website use Start-Process "https://...".';
   }
   if (/access is denied|requires elevation|administrator|unauthorizedaccess|permission denied/.test(lower)) {
@@ -361,7 +361,7 @@ const toExecResult = (raw) => {
   let stderr = raw.shell === 'powershell' ? cleanPowerShellStderr(raw.stderr) : tidyOutput(raw.stderr);
   if (raw.fellBackFrom && raw.exitCode !== 0 && raw.psReason) {
     // Dono shells ne mana kiya: PowerShell ki wajah zyada kaam ki hai.
-    stderr = [raw.psReason.replace(/^MAYA_(?:PARSE_ERROR|NOT_FOUND):\s*/, 'PowerShell: '), stderr].filter(Boolean).join('\n');
+    stderr = [raw.psReason.replace(/^STONIC_(?:PARSE_ERROR|NOT_FOUND):\s*/, 'PowerShell: '), stderr].filter(Boolean).join('\n');
   }
   stderr = stderr.substring(0, 50000);
 

@@ -7,7 +7,7 @@
  *
  * WHAT WAS WRONG
  * --------------
- * The NSIS path downloads Maya-AI-Setup-<v>.exe — a sealed 622MB box — and
+ * The NSIS path downloads Stonic-AI-Setup-<v>.exe — a sealed 622MB box — and
  * calls that "downloaded". Everything expensive then happens AFTER the user
  * clicks Restart, with the app closed and a Setup window on screen:
  *
@@ -40,8 +40,8 @@
  * from outside the installation, so it is not standing inside the folder it is
  * moving:
  *
- *     "Maya AI"          →  "Maya AI.old-<stamp>"
- *     "Maya AI.staging"  →  "Maya AI"
+ *     "Stonic AI"          →  "Stonic AI.old-<stamp>"
+ *     "Stonic AI.staging"  →  "Stonic AI"
  *
  * Both are renames within one directory, so NTFS does them as metadata
  * updates: no copying, no size dependency, ~milliseconds. The install path
@@ -51,7 +51,7 @@
  * HARD LINKS — why staging is nearly free
  * ---------------------------------------
  * A hard link is a second name for bytes already on disk, not a second copy.
- * ~28,000 of Maya's ~28,400 files (python-embedded, python-runtime,
+ * ~28,000 of Stonic's ~28,400 files (python-embedded, python-runtime,
  * voice-runtime, computer-runtime, browsers/chromium) are byte-identical
  * between releases, so staging links them and writes only what actually changed.
  * A staged 2.0GB update typically occupies tens of megabytes.
@@ -182,7 +182,7 @@ const log = {
 
 // ── Tunables ────────────────────────────────────────────────────────────────
 const FEED_FILE = 'staged/latest.json';
-const DEFAULT_FEED_BASE = 'https://updates.mayaai.com';
+const DEFAULT_FEED_BASE = 'https://updates.stonicai.com';
 const INITIAL_CHECK_DELAY_MS = 8 * 1000;
 const NORMAL_CHECK_INTERVAL_MS = 4 * 60 * 60 * 1000;
 const RETRY_DELAYS_MS = [60 * 1000, 5 * 60 * 1000, 15 * 60 * 1000, 60 * 60 * 1000];
@@ -217,12 +217,12 @@ function getStagingDir() {
 }
 function getCacheDir() {
   const base = process.env.LOCALAPPDATA || app.getPath('userData');
-  return path.join(base, 'maya_gen3-updater', 'staged');
+  return path.join(base, 'stonic_gen3-updater', 'staged');
 }
 const cachePath = (name) => path.join(getCacheDir(), name);
 
 // The tree is only trusted when this file says it is, and it is written last.
-const READY_MARKER = '.maya-staged.json';
+const READY_MARKER = '.stonic-staged.json';
 // The one file the installation has that no build has: NSIS writes it at
 // install time. Carried across every swap (preserveInstallOnlyFiles), and
 // therefore never a stray when a resumed tree already holds it.
@@ -1023,7 +1023,7 @@ function startSwap({ planPath, helperPath }, { relaunch }) {
   // Object flagged KILL_ON_JOB_CLOSE. When this process exits, Windows closes
   // that job and kills everything in it. That is what happened to the
   // PowerShell helper this exe replaces: swap.log stopped at "Waiting for
-  // Maya AI (pid …) to exit…" because the helper died in the same instant
+  // Stonic AI (pid …) to exit…" because the helper died in the same instant
   // the app did. child.unref() is no defence — it only affects the event loop.
   //
   // detached:true keeps the child out of the job, but libuv implements it with
@@ -1736,7 +1736,7 @@ function setupStagedUpdater(options) {
     try {
       state.installRequested = true;
       startSwap(state.ready.swap, { relaunch: false });
-      log.info(`${state.ready.version} will be in place the next time Maya AI is opened.`);
+      log.info(`${state.ready.version} will be in place the next time Stonic AI is opened.`);
     } catch (err) {
       // Quitting must never fail because an update could not start. The staged
       // tree stays where it is and the next launch offers it again.

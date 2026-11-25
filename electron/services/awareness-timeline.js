@@ -18,7 +18,7 @@
 //    away   -> user uth gaya (koi input nahi)
 //    back   -> wapas aaya                     { mins }
 //    lock / unlock / sleep / wake
-//    start  -> Maya khula
+//    start  -> Stonic khula
 //
 //  Model ko ye kachi list nahi di jati — `digest()` isay chand lines mein
 //  samet deta hai ("09:02–10:40 (1h 38m) Code — main.js"), kyunki dimaagh ki
@@ -173,7 +173,7 @@ class Timeline {
       if (r.type === 'unlock') return `${clock(r.t)} unlocked the computer`;
       if (r.type === 'sleep') return `${clock(r.t)} computer went to sleep`;
       if (r.type === 'wake') return `${clock(r.t)} computer woke up${r.mins ? ` after ${humanMinutes(r.mins * 60000)}` : ''}`;
-      if (r.type === 'start') return `${clock(r.t)} Maya was opened`;
+      if (r.type === 'start') return `${clock(r.t)} Stonic was opened`;
       return null;
     }).filter(Boolean);
 
@@ -188,7 +188,7 @@ class Timeline {
 // ════════════════════════════════════════════════════════════════════════════
 //
 //  Diary sirf 18 ghante ki hoti hai, is liye kal ka din us mein nahi milta. Aur
-//  jo cheez Maya ko "koi" banati hai wo yehi hai ke usay kal yaad ho. Ledger
+//  jo cheez Stonic ko "koi" banati hai wo yehi hai ke usay kal yaad ho. Ledger
 //  har din ki chaar baatein rakhta hai: kab shuru, kab khatam, kitni der kaam,
 //  aur kin apps mein. Titles nahi — sirf app ke naam.
 //
@@ -268,14 +268,14 @@ class DayLedger {
   }
 
   /**
-   * Aaj sab se zyada kin apps mein waqt guzra (Maya khud nahi), minute ke
+   * Aaj sab se zyada kin apps mein waqt guzra (Stonic khud nahi), minute ke
    * saath — Mind panel ke "Our day" ke liye. 5 minute se kam wali app nahi.
    */
   topApps(now = Date.now(), max = 3) {
     const d = this.days[dayKey(now)];
     if (!d) return [];
     return Object.keys(d.apps)
-      .filter((app) => app && app !== 'Maya' && d.apps[app] >= 5 * 60 * 1000)
+      .filter((app) => app && app !== 'Stonic' && d.apps[app] >= 5 * 60 * 1000)
       .sort((a, b) => d.apps[b] - d.apps[a])
       .slice(0, max)
       .map((name) => ({ name, minutes: Math.round(d.apps[name] / 60000) }));

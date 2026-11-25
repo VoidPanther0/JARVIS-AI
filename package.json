@@ -1,8 +1,8 @@
 {
-  "name": "maya-ai",
+  "name": "stonic_gen3",
   "version": "1.0.0",
-  "description": "Maya AI - Your advanced desktop assistant.",
-  "author": "Maya AI",
+  "description": "Stonic AI - Your advanced desktop assistant.",
+  "author": "Stonic AI",
   "main": "electron/main.js",
   "license": "ISC",
   "type": "commonjs",

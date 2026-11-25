@@ -6,7 +6,7 @@
 // banta hai. Is liye disk par ye ab bilkul `auth.json` ki tarah rakhi jati
 // hain — Windows DPAPI (Electron safeStorage) se encrypted:
 //
-//     { "enc": "maya-dpapi-v1", "data": "<base64 DPAPI blob>" }
+//     { "enc": "stonic-dpapi-v1", "data": "<base64 DPAPI blob>" }
 //
 // Sirf YEHI Windows user isay khol sakta hai. Gen 2 ki purani plain-text file
 // pehli parhai par khud encrypted ho jati hai — koi key dobara nahi daalni
@@ -24,7 +24,7 @@
 
 const fs = require('fs');
 
-const ENC_MARK = 'maya-dpapi-v1';
+const ENC_MARK = 'stonic-dpapi-v1';
 
 let safeStorage = null;
 try {

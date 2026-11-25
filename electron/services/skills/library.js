@@ -3,7 +3,7 @@
 /**
  * User ki skills — EK folder, Claude Code ke official Agent Skills format mein.
  *
- *   Documents\Maya Data\skills\custom\<naam>\SKILL.md    (+ skill ki apni files)
+ *   Documents\Stonic Data\skills\custom\<naam>\SKILL.md    (+ skill ki apni files)
  *
  * Har skill ek folder hai, aur folder ka naam hi skill ka naam: Claude Code plugin
  * skills ka naam folder se leta hai, SKILL.md ke `name` se nahi (naapa, CLI 2.1.318).
@@ -12,7 +12,7 @@
  *
  * Dono voice assistants inhein Claude ke official raaste se use karte hain:
  *
- *   New + Classic ka Claude dimagh   maya-voice (Claude Agent SDK) ko `forEngine()`
+ *   New + Classic ka Claude dimagh   stonic-voice (Claude Agent SDK) ko `forEngine()`
  *                                    milta hai: ek plugin folder (app ke data mein) jis
  *                                    mein sirf `.claude-plugin/plugin.json` aur `skills/`
  *                                    — user ke folder ka junction (kuch copy nahi hota).
@@ -23,7 +23,7 @@
  *                                    SKILL.md parhta hai (skills-handlers.js).
  *
  * Model ko sirf wo skill di jati hai jo Claude Code waqai load kar sake (`usable`):
- * frontmatter saaf YAML ho, description ho, aur aisi koi setting na ho jo Maya ke
+ * frontmatter saaf YAML ho, description ho, aur aisi koi setting na ho jo Stonic ke
  * pehre se bahar kaam kare (apne hooks, apna model …). Jo na chal sake us par saaf
  * wajah (`problems`) — chup chaap gayab nahi.
  */
@@ -35,9 +35,9 @@ const yaml = require('js-yaml');
 
 const SKILL_FILE = 'SKILL.md';
 const STATE_FILE = '.state.json';
-// Plugin ka naam: model ko skill "maya:weekly-report" dikhti hai. Engine yehi naam
-// plugin.json se parhta hai (maya-voice config.py `_parse_skills`).
-const PLUGIN_NAME = 'maya';
+// Plugin ka naam: model ko skill "stonic:weekly-report" dikhti hai. Engine yehi naam
+// plugin.json se parhta hai (stonic-voice config.py `_parse_skills`).
+const PLUGIN_NAME = 'stonic';
 // Agent Skills ka naam: chhote harf, adad, beech mein hyphen; 64 tak.
 const NAME_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const MAX_NAME_CHARS = 64;
@@ -48,19 +48,19 @@ const MAX_WHEN_CHARS = 500;
 const MAX_BODY_CHARS = 200000;
 const MAX_SKILL_BYTES = 512 * 1024;
 const MAX_FILES_LISTED = 50;
-// Pichle Maya UI ki likhi SKILL.md mein sirf yehi keys hoti thin (har ek ek line, bina quotes).
+// Pichle Stonic UI ki likhi SKILL.md mein sirf yehi keys hoti thin (har ek ek line, bina quotes).
 const LEGACY_KEYS = new Set(['name', 'description', 'author', 'version', 'tags']);
 const OWN_KEYS = new Set(['name', 'description', 'when_to_use']);
 
-// Claude Code ki wo settings jo skill ko Maya ke pehre / user ki settings se bahar le jati hain.
+// Claude Code ki wo settings jo skill ko Stonic ke pehre / user ki settings se bahar le jati hain.
 // Aisi skill model ko nahi di jati (fehrist se hi bahar = kabhi chalti nahi); user ko saaf wajah.
 // Skills card mein khol kar save karne se ye settings hat jati hain (`save`).
 const BLOCKED_KEYS = [
-  ['hooks', 'It runs its own commands (hooks), which Maya does not allow. Open it and save to remove them.'],
+  ['hooks', 'It runs its own commands (hooks), which Stonic does not allow. Open it and save to remove them.'],
   ['model', 'It picks its own AI model instead of your voice settings. Open it and save to remove that line.'],
   ['effort', 'It sets its own thinking level instead of your voice settings. Open it and save to remove that line.'],
-  ['context', 'It asks to run in a separate helper, which Maya does not do. Open it and save to remove that line.'],
-  ['agent', 'It asks for a separate helper agent, which Maya does not do. Open it and save to remove that line.'],
+  ['context', 'It asks to run in a separate helper, which Stonic does not do. Open it and save to remove that line.'],
+  ['agent', 'It asks for a separate helper agent, which Stonic does not do. Open it and save to remove that line.'],
 ];
 const MANUAL_ONLY_KEY = 'disable-model-invocation';
 
@@ -119,7 +119,7 @@ function splitSkill(raw) {
 }
 
 /**
- * Pichle Maya UI ki frontmatter, usi ke purane tareeqe se (har line `key: value`).
+ * Pichle Stonic UI ki frontmatter, usi ke purane tareeqe se (har line `key: value`).
  * Wo UI description bina quotes ke likhta tha — ":" ya "#" wali description saaf
  * YAML nahi rehti, aur Claude Code aisi skill chup chaap chhor deta hai (naapa,
  * CLI 2.1.318). Sirf tab jab block poora usi shakl ka ho; warna null.
@@ -147,7 +147,7 @@ function legacyFields(block) {
   return Object.prototype.hasOwnProperty.call(out, 'description') ? out : null;
 }
 
-/** Saaf SKILL.md: Maya ki teen keys pehle, baqi user ki keys jaisi thin. */
+/** Saaf SKILL.md: Stonic ki teen keys pehle, baqi user ki keys jaisi thin. */
 function renderSkill({ name, description, whenToUse, extra, body }) {
   const data = { name, description };
   if (whenToUse) data.when_to_use = whenToUse;
@@ -183,7 +183,7 @@ function samePath(a, b) {
 class SkillsLibrary {
   /**
    * @param {object} options
-   * @param {() => string} options.skillsDir  user ka skills folder (Documents\Maya Data\skills\custom)
+   * @param {() => string} options.skillsDir  user ka skills folder (Documents\Stonic Data\skills\custom)
    * @param {string} options.pluginDir        app ka plugin folder (Claude Code `plugins` ka raasta)
    * @param {(file: string) => Promise<void>} [options.trash]  delete = Recycle Bin (Electron shell.trashItem)
    * @param {(level: string, message: string) => void} [options.log]
@@ -326,7 +326,7 @@ class SkillsLibrary {
   // ── Purani shakl → official shakl (ek dafa, khud) ───────────────────────
 
   /**
-   * Pichle Maya builds ki skills ko Claude Code ke qabil banana:
+   * Pichle Stonic builds ki skills ko Claude Code ke qabil banana:
    *   1. folder ke bahar padi `.md` file → apna folder + SKILL.md (Claude Code sirf folder parhta hai)
    *   2. ghalat folder ka naam ("My Skill") → saaf naam ("my-skill")
    *   3. purani UI ki frontmatter (bina quotes) → saaf YAML, wohi alfaaz
@@ -457,7 +457,7 @@ class SkillsLibrary {
     const file = path.join(target, SKILL_FILE);
     const existing = splitSkill(readText(file) || '');
     const extra = { ...(existing.data || legacyFields(existing.block) || {}) };
-    // Skills card mein save = Maya mein chalne wali skill: pehre se bahar wali settings hat jati hain.
+    // Skills card mein save = Stonic mein chalne wali skill: pehre se bahar wali settings hat jati hain.
     for (const [key] of BLOCKED_KEYS) delete extra[key];
     delete extra[MANUAL_ONLY_KEY];
     writeAtomic(file, renderSkill({ name: slug, description: desc, whenToUse: when, extra, body: text }));
@@ -486,7 +486,7 @@ class SkillsLibrary {
     return { ok: true };
   }
 
-  // ── Claude ke dimagh ke liye (maya-voice) ──────────────────────────────
+  // ── Claude ke dimagh ke liye (stonic-voice) ──────────────────────────────
 
   /**
    * Engine ka `skills` hissa: plugin folder + chalu skills ke naam + nishan + skills
@@ -519,7 +519,7 @@ class SkillsLibrary {
       const target = this.skillsDir();
       fs.mkdirSync(path.join(root, '.claude-plugin'), { recursive: true });
       const manifestPath = path.join(root, '.claude-plugin', 'plugin.json');
-      const manifest = `${JSON.stringify({ name: PLUGIN_NAME, description: 'Skills the user saved in Maya.' }, null, 2)}\n`;
+      const manifest = `${JSON.stringify({ name: PLUGIN_NAME, description: 'Skills the user saved in Stonic.' }, null, 2)}\n`;
       if (readText(manifestPath) !== manifest) writeAtomic(manifestPath, manifest);
       const link = path.join(root, 'skills');
       let stat = null;

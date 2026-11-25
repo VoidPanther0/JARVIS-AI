@@ -12,7 +12,7 @@
 //  ke neeche ho, ya aise hi kisi frame ke andar. URL se pehchan nahi hoti —
 //  Electron srcdoc frame ka `url` khali deta hai.
 //
-//  APP KE APNE IFRAME MUSTASNA (Maya Player ka YouTube / TikTok waghera):
+//  APP KE APNE IFRAME MUSTASNA (Stonic Player ka YouTube / TikTok waghera):
 //  naya iframe apni pehli navigation tak "null" origin dikhata hai (Electron 34
 //  mein naapa). Is liye pehra use bhi hub ka page samajhta tha, YouTube kabhi
 //  load hi nahi hota tha, aur player 15 s baad "YouTube is not responding"

@@ -1,13 +1,13 @@
 'use strict';
 // ═══════════════════════════════════════════════════════════════
-//  VoiceBetaManager — Maya Voice (Beta) ke engine ka maalik
+//  VoiceBetaManager — Stonic Voice (Beta) ke engine ka maalik
 //
 //  Beta ek alag voice assistant hai (Voice Lab wali pipeline: sunna → dimagh →
 //  jazbaati awaaz). Asal voice assistant aur agents se is ka koi taalluq nahi —
 //  na un ka code chhuta hai, na un ki settings. User do mein se ek raasta
 //  chunta hai:
 //
-//    Maya Cloud   teeno hisse hamare gateway se, user ke plan ke andar. Koi
+//    Stonic Cloud   teeno hisse hamare gateway se, user ke plan ke andar. Koi
 //                   key nahi; awaaz poori jazbaati. Shuru karne se pehle gateway
 //                   se poochha jata hai (plan chalta hai? kaun se models?).
 //    Custom API     user ki apni keys: dimagh Claude/Gemini/Groq, awaaz Gemini
@@ -20,7 +20,7 @@
 //     raasta, chabiyan, dimagh ka provider/model, soch ki satah. Chabiyan
 //     renderer ko kabhi wapas nahi jatin — sirf "lagi hai" aur aakhri 4 huroof.
 //
-//  2. Engine (maya-voice/server.py, Python) ki zindagi:
+//  2. Engine (stonic-voice/server.py, Python) ki zindagi:
 //       - User Beta kholta hai → engine uthta hai (pehli dafa ~10 s: Pipecat
 //         aur models load hote hain). App ke boot par KUCH nahi chalta.
 //       - Settings engine ko yaad-dasht mein di jati hain (POST /beta/config),
@@ -33,19 +33,19 @@
 //
 //  3. Screen ka kaam (dimagh Claude ho aur user ne Screen control band na kiya
 //     ho): engine khud screen dekhta aur mouse / keyboard chalata hai
-//     (maya-voice/maya_voice/screen.py). Engine stdout par batata hai ke
+//     (stonic-voice/stonic_voice/screen.py). Engine stdout par batata hai ke
 //     kaam shuru hua / qadam / khatam; yahan us par do cheezein hoti hain:
-//       - Maya ki apni window raaste se hat-ti hai (Beta ki screen poori app
-//         ke upar khulti hai — warna dimagh ko screen par Maya hi dikhta).
+//       - Stonic ki apni window raaste se hat-ti hai (Beta ki screen poori app
+//         ke upar khulti hai — warna dimagh ko screen par Stonic hi dikhta).
 //       - Wohi glow + HUD jo asal computer agent ka hai (ComputerOverlay ka
 //         ALAG instance — asal agent ka apna hai), aur us ka Esc kaam rokta hai.
 //
 //  4. Classic voice ka kaam (5 Nov 2026): Classic mein baat Gemini Live karta
 //     hai, magar PC ka har kaam (`agent_task`) isi engine ke Claude Agent SDK
-//     dimagh par jata hai (maya-voice/maya_voice/work.py) — wohi jo New
+//     dimagh par jata hai (stonic-voice/stonic_voice/work.py) — wohi jo New
 //     chalata hai. Yahan se `workTask` / `workStop` / `workClose` / `workStatus`;
 //     engine ki "work" khabrein (qadam, report) renderer ko `voice-beta:work` par.
-//     Raasta aur chabi wohi jo Maya Voice ki Settings mein hai (Cloud ya apni
+//     Raasta aur chabi wohi jo Stonic Voice ki Settings mein hai (Cloud ya apni
 //     Claude / OpenRouter key) — har kaam ke saath engine ko jati hai, New ki
 //     chalti baat-cheet ki settings ko chhuye baghair.
 //
@@ -77,15 +77,15 @@ const num = (name, dflt) => Number(process.env[name]) || dflt;
 // thandi disk par (boot ke foran baad, antivirus scan) kai guna — naapa (15 Oct
 // 2026): dev PC par bhi bina cache 60 s. Naye PC par pehli dafa antivirus
 // runtime ki ~12,000 files parhta hai; 120 s wahan kam tha.
-const START_TIMEOUT_MS = num('MAYA_VOICE_START_TIMEOUT_MS', 5 * 60 * 1000);
+const START_TIMEOUT_MS = num('STONIC_VOICE_START_TIMEOUT_MS', 5 * 60 * 1000);
 // User Beta se nikle to engine itni der garam rahe.
-const KEEP_WARM_MS = num('MAYA_VOICE_KEEP_WARM_MS', 2 * 60 * 1000);
+const KEEP_WARM_MS = num('STONIC_VOICE_KEEP_WARM_MS', 2 * 60 * 1000);
 // Classic ki baat-cheet band hui: engine (aur desk ka dimagh — pichle kaam ki yaad)
 // itni der garam, taake jaldi wapas aayein to pehla kaam foran shuru ho.
-const WORK_KEEP_WARM_MS = num('MAYA_VOICE_WORK_KEEP_WARM_MS', 10 * 60 * 1000);
+const WORK_KEEP_WARM_MS = num('STONIC_VOICE_WORK_KEEP_WARM_MS', 10 * 60 * 1000);
 // Classic ke kaam ke liye Cloud gateway ka "session" jawab (plan + model) itni der
 // yaad: pehle HAR agent_task (chalte kaam mein hukm bhi) gateway tak jata tha (~1–3 s).
-const WORK_CLOUD_TTL_MS = num('MAYA_VOICE_WORK_CLOUD_TTL_MS', 5 * 60 * 1000);
+const WORK_CLOUD_TTL_MS = num('STONIC_VOICE_WORK_CLOUD_TTL_MS', 5 * 60 * 1000);
 const REQUEST_TIMEOUT_MS = 20 * 1000;
 const STDERR_TAIL_LINES = 40;
 // Ghalti ke paigham mein stderr ki itni aakhri lines (poora Python traceback aa jaye).
@@ -98,11 +98,11 @@ const PROVIDERS = ['anthropic', 'gemini', 'groq', 'openrouter'];
 // bhi karte hain. Groq Settings se hata (engine us ke liye ab bhi tayyar hai).
 // 7 Nov 2026 (Usman): teesra dimagh Gemini — zyada tar customers muft Gemini key hi
 // lagate hain. Wohi Claude Code harness (PC ka kaam, screen ke haath), model Gemini:
-// engine ka pul (maya_voice/gemini_relay.py) Claude ki zubaan Google ki zubaan mein
+// engine ka pul (stonic_voice/gemini_relay.py) Claude ki zubaan Google ki zubaan mein
 // badalta hai. Ek hi Gemini key par sab: awaaz + dimagh.
 const AVAILABLE_PROVIDERS = ['anthropic', 'openrouter', 'gemini'];
 const THINKING = ['low', 'medium', 'high'];
-// Raasta: 'cloud' = Maya Cloud, 'custom' = user ki apni keys.
+// Raasta: 'cloud' = Stonic Cloud, 'custom' = user ki apni keys.
 const MODES = ['cloud', 'custom'];
 // Custom API par awaaz: 'live' = Gemini Live (muft key par bhi, ada kam),
 // 'tts' = Gemini 3.8 TTS (poori ada, key par requests ki tang hadd).
@@ -136,9 +136,9 @@ const allowedModel = (provider, model) => MODEL_ID.test(model)
   && (provider !== 'gemini' || /^gemini-/i.test(model));
 const CHARACTER_ID = /^[A-Za-z0-9_-]{1,64}$/;
 const MAX_PROMPT_CHARS = 6000;
-// Agent (dimagh Claude ho to wo kaam bhi karta hai): renderer Maya ke apne
+// Agent (dimagh Claude ho to wo kaam bhi karta hai): renderer Stonic ke apne
 // tools ka naqsha aur yaadash ka card bhejta hai. Yahan sirf haddein; har cheez
-// ki asli jaanch engine karta hai (maya_voice/config.py `_parse_agent`).
+// ki asli jaanch engine karta hai (stonic_voice/config.py `_parse_agent`).
 const MAX_AGENT_TOOLS = 40;
 const MAX_AGENT_MEMORY_CHARS = 40000;
 // Awareness ka block (is lamhe ka haal + diary) — engine bhi isi hadd par kat-ta hai (config.py).
@@ -147,7 +147,7 @@ const MAX_AWARENESS_CHARS = 8000;
 const MAX_HISTORY_TURNS = 40;
 const MAX_HISTORY_TURN_CHARS = 1500;
 // Chat ki "notebook" (Claude Agent SDK ka session) — UUID hi. Engine isi naam se
-// resume karta hai (agent.py); file MAYA_VOICE_AGENT_HOME/projects/*/<id>.jsonl.
+// resume karta hai (agent.py); file STONIC_VOICE_AGENT_HOME/projects/*/<id>.jsonl.
 const SESSION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const TOOL_NAME = /^[a-z][a-z0-9_]{1,48}$/;
 // Classic ka kaam (engine work.py): desk / kaam ke naam aur hukm ki lambai.
@@ -173,7 +173,7 @@ const MAX_WORLD_BRIEF_CHARS = 24000;
 const MAX_WORLD_SOURCES = 60;
 // Ek brief mein web searches (engine ki apni sakht hadd bhi yehi: world.py MAX_SEARCHES).
 const MAX_WORLD_SEARCHES = 5;
-// Maya ki Ruh (engine soul.py): awareness ka dimagh Claude Agent SDK par.
+// Stonic ki Ruh (engine soul.py): awareness ka dimagh Claude Agent SDK par.
 const SOUL_MODES = new Set(['moment', 'sleep']);
 const SOUL_STATUSES = new Set(['done', 'failed', 'stopped']);
 const SOUL_STEP_TOOLS = new Set(['read', 'write']);
@@ -252,14 +252,14 @@ function engineLaunch({ runtime, userDataDir, baseEnv, token, parentPid, logPath
     PYTHONIOENCODING: 'utf-8',
     PYTHONUTF8: '1',
     PYTHONUNBUFFERED: '1',
-    MAYA_VOICE_TOKEN: token,
-    MAYA_VOICE_PARENT_PID: String(parentPid),
-    MAYA_VOICE_LOG: logPath,
+    STONIC_VOICE_TOKEN: token,
+    STONIC_VOICE_PARENT_PID: String(parentPid),
+    STONIC_VOICE_LOG: logPath,
     // Engine apne log mein likhta hai ke app ke chalane ke kitni der baad tayyar / garam hua.
-    MAYA_VOICE_SPAWNED_AT: String(spawnedAt),
+    STONIC_VOICE_SPAWNED_AT: String(spawnedAt),
     // Agent ke dimagh (Claude Agent SDK) ka apna ghar: user ke apne Claude
     // Code (~/.claude) se bilkul alag — na us ka login, na us ki settings.
-    MAYA_VOICE_AGENT_HOME: path.join(userDataDir, 'voice-beta-agent'),
+    STONIC_VOICE_AGENT_HOME: path.join(userDataDir, 'voice-beta-agent'),
   };
   if (shipped) {
     // User ke mahaul ka prefix / optimize installer ki .pyc ko be-kaar kar deta (Python doosri jagah / doosri .pyc dhoondta).
@@ -275,7 +275,7 @@ function engineLaunch({ runtime, userDataDir, baseEnv, token, parentPid, logPath
   delete env.PYTHONHOME;
   delete env.PYTHONPATH;
   // User ki machine par us ke apne Claude Code ki settings (koi aur server,
-  // koi aur key) Maya ke dimagh tak na pohnchen. Engine khud bhi yehi karta hai.
+  // koi aur key) Stonic ke dimagh tak na pohnchen. Engine khud bhi yehi karta hai.
   for (const name of Object.keys(env)) {
     if (/^(ANTHROPIC_|CLAUDE_|CLAUDECODE)/i.test(name)) delete env[name];
   }
@@ -325,10 +325,10 @@ class VoiceBetaManager {
    * @param {() => (string|null)} [opts.getAppOpenRouterKey]  app ki apni OpenRouter key (Settings → AI Engine) —
    *        Beta mein alag key na ho to screen ka nishana (UI-TARS) usi se chalta hai
    * @param {() => boolean} [opts.isAllowed]  is user ke paas app ka access hai? (main process ki apni yaad se)
-   * @param {() => {signedIn: boolean, active: boolean}} [opts.getCloudState]  Maya Cloud ka haal, main process
+   * @param {() => {signedIn: boolean, active: boolean}} [opts.getCloudState]  Stonic Cloud ka haal, main process
    *        ki apni yaad se (koi network nahi): login hai? plan chal raha hai?
    * @param {() => Promise<{ok: true, gateway: string, token: string} | {ok: false, code: string}>} [opts.getCloudAccess]
-   *        gateway ka pata aur Maya ka token (device key, warna taaza login token)
+   *        gateway ka pata aur Stonic ka token (device key, warna taaza login token)
    * @param {typeof fetch} [opts.fetchImpl]  test ke liye
    * @param {() => {ok: boolean, python: string|null, server: string|null, missing: string[]}} [opts.describeRuntime]
    */
@@ -443,7 +443,7 @@ class VoiceBetaManager {
     };
   }
 
-  // 6 Nov 2026: Maya Voice ki alag Settings khatam — sab Settings → AI Engine
+  // 6 Nov 2026: Stonic Voice ki alag Settings khatam — sab Settings → AI Engine
   // mein. Wahan Gemini aur OpenRouter ki EK EK key hai (app ki store), is liye
   // ab app wali key PEHLE: jo key screen par dikhti hai wahi chalti hai. Beta ki
   // purani apni key sirf tab jab app mein key hi na ho (warna purana setup
@@ -453,7 +453,7 @@ class VoiceBetaManager {
   _geminiKey(config) {
     let appKey = '';
     try { appKey = cleanKey(this._getAppGeminiKey()); } catch { appKey = ''; }
-    if (appKey) return { key: appKey, source: 'maya' };
+    if (appKey) return { key: appKey, source: 'stonic' };
     return config.keys.gemini ? { key: config.keys.gemini, source: 'beta' } : { key: '', source: null };
   }
 
@@ -461,7 +461,7 @@ class VoiceBetaManager {
   _openRouterKey(config) {
     let appKey = '';
     try { appKey = cleanKey(this._getAppOpenRouterKey()); } catch { appKey = ''; }
-    if (appKey) return { key: appKey, source: 'maya' };
+    if (appKey) return { key: appKey, source: 'stonic' };
     return config.keys.openrouter ? { key: config.keys.openrouter, source: 'beta' } : { key: '', source: null };
   }
 
@@ -502,7 +502,7 @@ class VoiceBetaManager {
     return provider === 'openrouter' && isOpenRouterClaude(config.models.openrouter);
   }
 
-  /** Maya Cloud ka haal (login? plan?). Poochhne mein ghalti ho to "nahi". */
+  /** Stonic Cloud ka haal (login? plan?). Poochhne mein ghalti ho to "nahi". */
   _cloudState() {
     try {
       const state = this._getCloudState() || {};
@@ -514,7 +514,7 @@ class VoiceBetaManager {
 
   /**
    * Wo raasta jo waqai chalega: user ka chuna hua; na chuna ho to plan chalta
-   * ho to Maya Cloud, warna apni keys.
+   * ho to Stonic Cloud, warna apni keys.
    */
   _mode(config) {
     if (config.mode) return config.mode;
@@ -522,7 +522,7 @@ class VoiceBetaManager {
   }
 
   _missing(config) {
-    // Maya Cloud par koi key nahi lagti (login aur plan start() par poochhe jate hain).
+    // Stonic Cloud par koi key nahi lagti (login aur plan start() par poochhe jate hain).
     if (this._mode(config) === 'cloud') return [];
     const provider = this._provider(config);
     const missing = [];
@@ -671,7 +671,7 @@ class VoiceBetaManager {
 
   /**
    * Engine ke liye poora config. Sirf wohi cheezein jo is session ko chahiyen:
-   * Custom API par user ki chabiyan, Maya Cloud par gateway ka pata + token
+   * Custom API par user ki chabiyan, Stonic Cloud par gateway ka pata + token
    * (`cloud` — _openCloudSession ka jawab) aur koi provider key nahi.
    */
   _enginePayload(config, character, cloud = null, agent = null) {
@@ -739,7 +739,7 @@ class VoiceBetaManager {
     }
   }
 
-  // ── Maya Cloud ──────────────────────────────────────────────────────────
+  // ── Stonic Cloud ──────────────────────────────────────────────────────────
 
   /**
    * Gateway se poochho: is user ka plan chalta hai, aur dimagh ka kaun sa
@@ -815,11 +815,11 @@ class VoiceBetaManager {
    * ek dafa — koi Live line nahi, is liye baat-cheet "tayyar" khadi reh sakti hai
    * (renderer ka standby) aur key dabate hi sunti hai. Sirf push-to-talk mein, aur
    * jab raasta ho: Cloud par gateway ne bataya ho, apni key par Gemini key ho.
-   * `MAYA_VOICE_PTT_CLIP=0` (sirf dev) = purane Live kaan.
+   * `STONIC_VOICE_PTT_CLIP=0` (sirf dev) = purane Live kaan.
    */
   _clipEars(config, cloud) {
     if (this._listen() !== 'ptt') return false;
-    if (String(process.env.MAYA_VOICE_PTT_CLIP || '').trim() === '0') return false;
+    if (String(process.env.STONIC_VOICE_PTT_CLIP || '').trim() === '0') return false;
     if (cloud) return cloud.transcribe === true;
     return Boolean(this._geminiKey(config).key);
   }
@@ -1030,7 +1030,7 @@ class VoiceBetaManager {
       this._screenRuns += 1;
       const maxSteps = Number.isInteger(message.max_steps) && message.max_steps > 0 ? message.max_steps : undefined;
       this._screen = { id: `beta-${this._screenRuns}`, maxSteps };
-      // Maya ki window apni jagah rehti hai: dimagh khud taskbar / Alt+Tab se
+      // Stonic ki window apni jagah rehti hai: dimagh khud taskbar / Alt+Tab se
       // doosri app par jata hai (config.py ki screen hidayat).
       this._overlayEvent({
         event: 'task_queued', id: this._screen.id, source: 'voice', max_steps: maxSteps,
@@ -1096,7 +1096,7 @@ class VoiceBetaManager {
 
   /**
    * Classic ka kaam kis raaste par chalega, ya kyun nahi chal sakta. Kaam Claude
-   * Code harness karta hai: Maya Cloud, apni Anthropic key, OpenRouter par Claude
+   * Code harness karta hai: Stonic Cloud, apni Anthropic key, OpenRouter par Claude
    * ka model, ya muft Gemini key (engine ka pul — gemini_relay.py).
    */
   _workRoute(config) {
@@ -1259,7 +1259,7 @@ class VoiceBetaManager {
 
   /**
    * Visual Hub ka HTML page user ke APNE dimagh par: wohi raasta jo Classic ke
-   * kaam ka hai — Maya Cloud, apni Claude / OpenRouter key, ya muft Gemini key.
+   * kaam ka hai — Stonic Cloud, apni Claude / OpenRouter key, ya muft Gemini key.
    * Drawer ke paas koi tool nahi (engine `tools=[]`), wo sirf likhta hai.
    * Foran lautta hai; lafz `voice-beta:visual` par aate hain. Kabhi throw nahi karta.
    *
@@ -1434,7 +1434,7 @@ class VoiceBetaManager {
     if (systemText.length > MAX_WORLD_SYSTEM_CHARS) return { ok: false, code: 'bad_request', message: 'system prompt too long' };
     const config = this._read();
     const route = this._workRoute(config);
-    // Har nakaami log mein (maya_main.log): panel sirf "na ho saka" dikhata hai, wajah yahan.
+    // Har nakaami log mein (stonic_main.log): panel sirf "na ho saka" dikhata hai, wajah yahan.
     const refuse = (code, message = '') => {
       console.warn(`[VoiceBeta] world brief shuru na ho saka: ${code}${message ? ` — ${String(message).slice(0, 200)}` : ''}`);
       return { ok: false, code, ...(message ? { message } : null) };
@@ -1582,7 +1582,7 @@ class VoiceBetaManager {
     this._worldRuns.clear();
   }
 
-  // ── Maya ki Ruh (engine soul.py — awareness ka dimagh, Claude Agent SDK) ──
+  // ── Stonic ki Ruh (engine soul.py — awareness ka dimagh, Claude Agent SDK) ──
 
   /**
    * Awareness ki ek soch Ruh se: user ka apna dimagh-raasta (Cloud / apni Claude ya
@@ -1856,7 +1856,7 @@ class VoiceBetaManager {
     try {
       const response = await fetch(`http://127.0.0.1:${this.port}${route}`, {
         method,
-        headers: { 'content-type': 'application/json', 'x-maya-voice-token': this.token },
+        headers: { 'content-type': 'application/json', 'x-stonic-voice-token': this.token },
         body: body === undefined ? undefined : JSON.stringify(body),
         signal: controller.signal,
       });
@@ -1937,7 +1937,7 @@ class VoiceBetaManager {
 
   /**
    * Dimagh ka `web_search` tool (renderer lib/beta/agent.ts se). Raasta wohi
-   * jis par baat-cheet chal rahi hai: Maya Cloud = gateway; Custom API =
+   * jis par baat-cheet chal rahi hai: Stonic Cloud = gateway; Custom API =
    * user ki Gemini key, phir Claude ki apni search (dimagh wali key par).
    * Tafseel web-search.js mein. Kabhi throw nahi karta.
    *

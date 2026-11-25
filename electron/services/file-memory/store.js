@@ -1,10 +1,10 @@
-// Maya ki yaadash — EK folder, Claude ki OFFICIAL memory ka tareeqa.
+// Stonic ki yaadash — EK folder, Claude ki OFFICIAL memory ka tareeqa.
 //
 // ════════════════════════════════════════════════════════════════════════════
 //  YE FILE KYA HAI
 // ════════════════════════════════════════════════════════════════════════════
 //
-//   <appData>/Maya AI/Memory/<account>/
+//   <appData>/Stonic AI/Memory/<account>/
 //       MEMORY.md          fehrist — har yaad ki EK line. AI KHUD likhta hai
 //                          (Claude Code ki tarah); code sirf parhta hai, aur
 //                          sirf tab banata hai jab ye file hai hi nahi (CLI ka
@@ -66,7 +66,7 @@ const COMMANDS = ['view', 'create', 'str_replace', 'insert', 'delete', 'rename']
 const IMAGE_FILE = /\.(jpe?g|png|webp|gif|bmp|heic)$/i;
 /** Note ke `image:` mein sirf saada naam — usi folder ki tasveer. */
 const NOTE_IMAGE_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]{0,150}\.(jpe?g|png|webp)$/i;
-const IMAGE_ONLY_APP = "Error: pictures in memory are saved by Maya itself (remember_photo). Write the story in the photo's .md note instead.";
+const IMAGE_ONLY_APP = "Error: pictures in memory are saved by Stonic itself (remember_photo). Write the story in the photo's .md note instead.";
 
 class MemoryError extends Error {}
 

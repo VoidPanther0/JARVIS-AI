@@ -1,5 +1,5 @@
 // PWA App Logic - Enhanced for Professional UI
-class MayaRemoteApp {
+class StonicRemoteApp {
     constructor() {
         this.socket = null;
         this.token = null;
@@ -30,7 +30,7 @@ class MayaRemoteApp {
     }
 
     loadSavedToken() {
-        const saved = localStorage.getItem('maya_token');
+        const saved = localStorage.getItem('stonic_token');
         if (saved) {
             try {
                 const data = JSON.parse(saved);
@@ -170,7 +170,7 @@ class MayaRemoteApp {
     }
 
     onAuthenticated() {
-        localStorage.setItem('maya_token', JSON.stringify({
+        localStorage.setItem('stonic_token', JSON.stringify({
             token: this.token,
             savedAt: Date.now()
         }));
@@ -307,7 +307,7 @@ class MayaRemoteApp {
             this.showError('Transcription failed');
         } finally {
             this.setThinking(false);
-            if (this.thinkingIndicator) this.thinkingIndicator.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span> Maya is analyzing...';
+            if (this.thinkingIndicator) this.thinkingIndicator.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span> Stonic is analyzing...';
         }
     }
 
@@ -324,7 +324,7 @@ class MayaRemoteApp {
         const content = sender === 'ai' ? marked.parse(text) : `<p>${this.escapeHtml(text)}</p>`;
 
         messageDiv.innerHTML = `
-            <span class="message-label">${sender === 'user' ? 'Identity' : 'Maya'}</span>
+            <span class="message-label">${sender === 'user' ? 'Identity' : 'Stonic'}</span>
             <div class="message-bubble">${content}</div>
         `;
 
@@ -402,9 +402,9 @@ class MayaRemoteApp {
 
 // Initialize
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { window.app = new MayaRemoteApp(); });
+    document.addEventListener('DOMContentLoaded', () => { window.app = new StonicRemoteApp(); });
 } else {
-    window.app = new MayaRemoteApp();
+    window.app = new StonicRemoteApp();
 }
 
 // PWA Service Worker

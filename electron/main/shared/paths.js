@@ -6,7 +6,7 @@ function createPaths(app) {
     getUserProfilePath: () => path.join(app.getPath('userData'), 'user_profile.json'),
     getDashboardSettingsPath: () => path.join(app.getPath('userData'), 'dashboard_settings.json'),
     getFolderConfigPath: () => path.join(app.getPath('userData'), 'imported_folders.json'),
-    getVaultPath: () => path.join(app.getPath('documents'), 'Maya_Vault'),
+    getVaultPath: () => path.join(app.getPath('documents'), 'Stonic_Vault'),
     getHistoryPath: () => path.join(app.getPath('userData'), 'history.json'),
     getHistorySettingsPath: () => path.join(app.getPath('userData'), 'history_settings.json'),
     getContactsPath: () => path.join(app.getPath('userData'), 'contacts.json'),

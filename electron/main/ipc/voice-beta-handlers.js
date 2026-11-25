@@ -1,7 +1,7 @@
 const { ipcMain } = require('electron');
 const { readReminders } = require('../../services/voice-reminders');
 
-// IPC surface for Maya Voice (Beta) — the second, separate voice assistant
+// IPC surface for Stonic Voice (Beta) — the second, separate voice assistant
 // that runs on the user's own API keys (VoiceBetaManager). The Beta screen in
 // the renderer talks to this; engine state comes back on `voice-beta:state`.
 //
@@ -54,7 +54,7 @@ function registerVoiceBetaHandlers({ getVoiceBetaManager }) {
   ipcMain.handle('voice-beta:world-run', withManager((mgr, args) => mgr.worldRun(args), { needsAccess: true }));
   ipcMain.handle('voice-beta:world-stop', withManager((mgr, args) => mgr.worldStop(args)));
 
-  // Maya ki Ruh: awareness ki soch Claude Agent SDK par (yaadash parhti / likhti hai).
+  // Stonic ki Ruh: awareness ki soch Claude Agent SDK par (yaadash parhti / likhti hai).
   // Shuru karna access maangta hai (engine aur chabi chalti hai); rokna hamesha khula.
   ipcMain.handle('voice-beta:soul-think', withManager((mgr, args) => mgr.soulThink(args), { needsAccess: true }));
   ipcMain.handle('voice-beta:soul-stop', withManager((mgr, args) => mgr.soulStop(args)));

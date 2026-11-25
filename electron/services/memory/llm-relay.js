@@ -5,7 +5,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 //
 //  Nichor ka faisla (qataar, gate, store) main process mein hai, magar model
-//  tak ka raasta — Maya Cloud ka token, us ka refresh, Custom API ki key, aur
+//  tak ka raasta — Stonic Cloud ka token, us ka refresh, Custom API ki key, aur
 //  user ne kaun sa engine chuna — sab renderer ke paas hai (Awareness ka
 //  dimaagh bhi wahin se call karta hai: src/lib/awareness/brain.ts).
 //

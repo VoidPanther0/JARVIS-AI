@@ -28,7 +28,7 @@ function createStaticHandler({ distPath, getMediaDir }) {
   // The videos no longer live in dist/: they ship unpacked under
   // resources/videos so nothing has to read them out of the asar (see
   // getMediaDir). This route is only the fallback — normally the renderer
-  // asks for them over maya-media:// and never reaches this server.
+  // asks for them over stonic-media:// and never reaches this server.
   const isMediaRoute = parsedUrl.startsWith('/videos/');
   const rootDir = isMediaRoute ? getMediaDir() : distPath;
   const relativePath = isMediaRoute

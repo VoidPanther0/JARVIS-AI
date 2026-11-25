@@ -1,13 +1,13 @@
 // Reminders / waqt par chalne wale kaam — Settings ki fehrist ke liye, sirf PARHNA.
 //
-// Ye reminders Maya nahi banata: Maya Voice ka dimagh Claude Code harness
+// Ye reminders Stonic nahi banata: Stonic Voice ka dimagh Claude Code harness
 // hai, aur ye us ke apne tools hain (CronCreate / CronList / CronDelete —
-// maya-voice/maya_voice/schedules.py). Harness inhein dimagh ke kaam ke
+// stonic-voice/stonic_voice/schedules.py). Harness inhein dimagh ke kaam ke
 // folder (user ka ghar) mein apni file `.claude/scheduled_tasks.json` mein
 // rakhta hai, aur waqt aane par khud chalata hai.
 //
 // App is file ko sirf PARHTI hai, taake user dekh sake abhi kya laga hua hai.
-// Likhna / mitana sirf harness ka kaam (user Maya se kehta hai: "wo reminder
+// Likhna / mitana sirf harness ka kaam (user Stonic se kehta hai: "wo reminder
 // hata do" → CronDelete). Is liye yahan koi write nahi — file ki shakl harness
 // ki hai, hum us ke maalik nahi.
 

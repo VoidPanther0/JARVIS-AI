@@ -1,9 +1,9 @@
-// Maya chehre pehchanta hai — sirf isi PC par.
+// Stonic chehre pehchanta hai — sirf isi PC par.
 //
 // ── KAHAN ───────────────────────────────────────────────────────────────────
 //
-//   %APPDATA%\Maya AI\Faces\<account>.json        chehre ke numbers (128 fi photo)
-//   %APPDATA%\Maya AI\Faces\<account>-<id>.jpg    jis photo se seekha (panel mein dikhti hai)
+//   %APPDATA%\Stonic AI\Faces\<account>.json        chehre ke numbers (128 fi photo)
+//   %APPDATA%\Stonic AI\Faces\<account>-<id>.jpg    jis photo se seekha (panel mein dikhti hai)
 //
 // Yaadash ke folder (…\Memory\<account>\) se BAHAR, jaan bujh kar: us folder ko AI
 // parhta hai aur jo AI parhta hai wo model ke server tak jata hai. Chehre ke numbers
@@ -53,7 +53,7 @@ const MAX_FACES_PER_FRAME = 4;
 
 /** Faces ka root — yaadash ke root (…\Memory) ka padosi, generation se azaad. */
 function facesRootFor(appDataDir) {
-  return path.join(appDataDir, 'Maya AI', 'Faces');
+  return path.join(appDataDir, 'Stonic AI', 'Faces');
 }
 
 const cleanName = (value) => String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60);
@@ -178,7 +178,7 @@ class FaceStore {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     const body = {
       version: VERSION,
-      about: 'Maya face recognition on this PC: numbers from your face photo. Never uploaded. "Forget my face" in Memory → Photos deletes it.',
+      about: 'Stonic face recognition on this PC: numbers from your face photo. Never uploaded. "Forget my face" in Memory → Photos deletes it.',
       people,
     };
     writeAtomic(file, `${JSON.stringify(body)}\n`);

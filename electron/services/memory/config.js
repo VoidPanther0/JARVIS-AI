@@ -157,7 +157,7 @@ const AGENT = {
   turnsMaxChars: 40000,
   turnMaxChars: 500,
   followUpsMax: 40,
-  /** Jo MEMORY mein na samaya us ke liye lafzi talash ke itne natije saath. */
+  /** Jo MEMORY mein na sastonic us ke liye lafzi talash ke itne natije saath. */
   olderHits: 6,
   /** Jawab voice ke context mein rehta aur har turn par dobara bill hota hai — is liye chhota. */
   answerMaxChars: 1100,
@@ -258,14 +258,14 @@ const TURN_FLAGS = {
 };
 
 /**
- * Wo text jo insaan ne nahi kaha — Maya ke apne khud-kaar prompts. Ye turn
+ * Wo text jo insaan ne nahi kaha — Stonic ke apne khud-kaar prompts. Ye turn
  * ke taur par likhe jate hain (record mukammal rahe) magar kabhi yaad nahi
  * bante. Lens bhi `[Automated record` ko isi tarah chhorta hai.
  */
 const AUTOMATED_PREFIXES = [
   '[Automated record',
-  '[Memory note via Maya',
-  '[Memory request via Maya',
+  '[Memory note via Stonic',
+  '[Memory request via Stonic',
   '[MEMORY NOTE]',
   '[SYSTEM_MEMORY_INJECTION]',
 ];

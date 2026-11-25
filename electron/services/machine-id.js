@@ -3,7 +3,7 @@
 // ── Machine ID — "ye kaun si machine hai" ka EK jawab, har launch par wahi ──
 //
 // Ye id server par device slot ka naam hai (machine_registrations.device_uuid),
-// Maya Cloud ki device key isi se bandhi hai, aur telemetry bhi isi ko
+// Stonic Cloud ki device key isi se bandhi hai, aur telemetry bhi isi ko
 // pehla source maanti hai. Agar ye id ek hi PC par badal jaye to server usay
 // NAYI machine samajhta hai — aur Basic (1 device) wala banda apne hi PC par
 // "This device needs a free slot" par atak jata hai.

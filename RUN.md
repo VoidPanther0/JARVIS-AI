@@ -4,7 +4,7 @@
 
 - Windows 10/11 (x64)
 - Node.js 20+ (tested with v26)
-- Maya AI installed at `C:\Users\This PC\AppData\Local\Programs\Maya AI`
+- Stonic AI installed at `C:\Users\This PC\AppData\Local\Programs\Stonic AI`
   (provides the Electron runtime used to launch the app)
 - ~2 GB free disk space (node_modules + resources)
 
@@ -24,24 +24,24 @@ npm start
 ```
 
 `npm start` runs `scripts/start.js`, which launches the app using the installed
-Electron runtime (`Maya AI.exe`). The app window opens and the backend server
+Electron runtime (`Stonic AI.exe`). The app window opens and the backend server
 starts on `http://127.0.0.1:45678`.
 
 Alternative (manual):
 
 ```bash
-"C:\Users\This PC\AppData\Local\Programs\Maya AI\Maya AI.exe" .
+"C:\Users\This PC\AppData\Local\Programs\Stonic AI\Stonic AI.exe" .
 ```
 
 ## First run
 
-- A data folder is created at `Documents\Maya Data\` (SOUL.md, MEMORY.md, skills).
+- A data folder is created at `Documents\Stonic Data\` (SOUL.md, MEMORY.md, skills).
 - Voice/computer runtimes are loaded from `resources\`.
 - Media server serves bundled videos from `resources\videos`.
 
 ## Build / Package
 
-Not configured in this repo. To package, use electron-builder with the Maya
+Not configured in this repo. To package, use electron-builder with the Stonic
 Electron binary as the runtime. (TODO)
 
 ## Troubleshooting

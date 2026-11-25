@@ -178,7 +178,7 @@ const KEY_PREFIXED = new RegExp(`(?<![A-Za-z0-9_-])(?:${[
   'AKIA[A-Z0-9]{16}(?![A-Za-z0-9])',                    // AWS
   'polar_[A-Za-z0-9_]{20,}',
   'hf_[A-Za-z0-9]{20,}',
-  'gsk_[A-Za-z0-9]{20,}',                               // Groq — Maya ki apni settings mein lagti hai
+  'gsk_[A-Za-z0-9]{20,}',                               // Groq — Stonic ki apni settings mein lagti hai
   'sb_secret_[A-Za-z0-9_-]{16,}',                       // Supabase
   'eyJ[A-Za-z0-9_-]{5,}\\.[A-Za-z0-9_-]{5,}\\.[A-Za-z0-9_-]*',   // JWT
 ].join('|')})`, 'g');
@@ -585,7 +585,7 @@ const COPULA_BEFORE = /(?:\b(?:is|hai|hay|hy)|[ہهھ]ے|है|[:=])\s*$/i;
 const CODE_SHAPE = String.raw`(\d{3}-\d{3}|\d(?: ?\d){3,7})(?![ -]?\d)(?![.,:/]\d)(?![A-Za-z_])`;
 const CODE_ANYWHERE = new RegExp(String.raw`(?<![\dA-Za-z_+])(?<!\d[ \-.,:/])${CODE_SHAPE}`, 'g');
 const CODE_HERE = new RegExp(CODE_SHAPE, 'y');
-// "the pin for my card is 4821", "your code for Maya is 482913" — beech mein
+// "the pin for my card is 4821", "your code for Stonic is 482913" — beech mein
 // "kis ka" aa jata hai; "is/hai" tak pohanchna lazmi, aur raste mein hindsa nahi.
 const WEAK_FOR = String.raw`(?:[ \t]+(?:for|of)(?:[ \t]+[^\s.!?:=\d]{1,24}){1,3}?(?=[ \t]+(?:is|hai|hay)${WEN}))?`;
 const WEAK_GAP = new RegExp(String.raw`${WEAK_FOR}(?:[ \t]*[:=#-]+)?(?:[ \t]+(?:${COPULA}|hain|tha|thi|number|nmbr|num|no|ye|yeh|yah|to|toh|tou|aya|aaya|ayi|aayi|mila|mili|received|${H}${Y}ں|${Y}${H}|نمبر|آ${Y}ا|ملا|यह|नंबर|आया|मिला)${WEN}){0,3}(?:[ \t]*[:=#-]+)?[ \t]*`, 'yiu');

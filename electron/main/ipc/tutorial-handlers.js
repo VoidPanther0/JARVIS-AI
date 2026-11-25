@@ -4,7 +4,7 @@ const path = require('path');
 
 // Settings → Tutorials ki videos jo app ke saath aati hain (public/videos →
 // packaged build mein resources/videos, asar ke bahar). App ke andar player
-// inhein maya-media:// se chalata hai; yahan sirf do kaam hain:
+// inhein stonic-media:// se chalata hai; yahan sirf do kaam hain:
 //
 //   tutorial-video:info           file is build mein hai? (na ho to card chhupta hai)
 //   tutorial-video:open-external  user ke apne video player mein kholna
@@ -12,7 +12,7 @@ const path = require('path');
 // Renderer sirf video ka id bhejta hai, raasta kabhi nahi — file ka naam isi
 // fehrist se aata hai, is liye koi aur file nahi khul sakti.
 const TUTORIAL_VIDEOS = Object.freeze({
-  'ai-engine-guide': 'maya-ai-engine-guide.mp4',
+  'ai-engine-guide': 'stonic-ai-engine-guide.mp4',
 });
 
 /** id -> file ka poora raasta, ya null (anjaan id / media folder nahi). */

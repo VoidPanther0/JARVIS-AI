@@ -1,11 +1,11 @@
 // ═══════════════════════════════════════════════════════════════
-//  Maya Voice (Beta) runtime — kaunsa Python, kahan ka engine
+//  Stonic Voice (Beta) runtime — kaunsa Python, kahan ka engine
 //
-//  Engine (maya-voice/server.py = Pipecat pipeline) ko ek Python chahiye jis
+//  Engine (stonic-voice/server.py = Pipecat pipeline) ko ek Python chahiye jis
 //  mein pipecat-ai aur us ke saathi installed hon.
 //
 //  Packaged app:  resources/voice-runtime/venv     (scripts/setup-voice-runtime.js)
-//                 resources/maya-voice/server.py
+//                 resources/stonic-voice/server.py
 //  Dev machine:   wahi folder repo ke andar ho to wahi; warna Voice Lab ka venv
 //                 (../voice-lab/.venv) — taake runtime banaye baghair test ho sake.
 //
@@ -40,7 +40,7 @@ function findVoiceRuntimeRoot() {
 
 /**
  * Dev fallback: Voice Lab ka venv. Lab workspace ki root par hota hai
- * (`Maya Ai - AGI/voice-lab`), repo (`MayaAi_main`) ke barabar mein.
+ * (`Stonic Ai - AGI/voice-lab`), repo (`StonicAi_main`) ke barabar mein.
  */
 function labVenvCandidates() {
     const exe = isWindows ? path.join('.venv', 'Scripts', 'python.exe') : path.join('.venv', 'bin', 'python');
@@ -56,7 +56,7 @@ function labVenvCandidates() {
  * Spawn hamesha `pythonSpawnEnv(baseEnv, launch)` ke environment ke saath.
  */
 function resolveLaunch() {
-    const override = process.env.MAYA_VOICE_PYTHON;
+    const override = process.env.STONIC_VOICE_PYTHON;
     if (override && fs.existsSync(override)) {
         return { python: override, env: {}, mode: 'override', venvPython: override, problem: null };
     }
@@ -82,8 +82,8 @@ function resolvePython() {
 /** server.py — packaged mein resources ke andar, dev mein repo mein. */
 function resolveServerScript() {
     return firstExisting([
-        process.resourcesPath ? path.join(process.resourcesPath, 'maya-voice', 'server.py') : null,
-        path.join(REPO_ROOT, 'maya-voice', 'server.py'),
+        process.resourcesPath ? path.join(process.resourcesPath, 'stonic-voice', 'server.py') : null,
+        path.join(REPO_ROOT, 'stonic-voice', 'server.py'),
     ]);
 }
 
@@ -130,12 +130,12 @@ function describeRuntime() {
     if (!python) {
         missing.push(
             `Python (voice-runtime): ${launch.problem || 'bundled venv nahi mila'}. `
-            + 'Chalayein `npm run build:voice-runtime`, ya MAYA_VOICE_PYTHON set karein. '
+            + 'Chalayein `npm run build:voice-runtime`, ya STONIC_VOICE_PYTHON set karein. '
             + `Dev mein ye bhi dekha gaya: ${labVenvCandidates().join(' | ')}`,
         );
     }
-    if (!server) missing.push('server.py: maya-voice/server.py nahi mili.');
-    // Installer ki .pyc sirf usi venv ke liye jo isi runtime ka hai (MAYA_VOICE_PYTHON se
+    if (!server) missing.push('server.py: stonic-voice/server.py nahi mili.');
+    // Installer ki .pyc sirf usi venv ke liye jo isi runtime ka hai (STONIC_VOICE_PYTHON se
     // koi aur ho to nahi). 'launcher' mode mein `python` bundled interpreter hai, magar venv
     // wahi — is liye venv ka raasta dekha jata hai, interpreter ka nahi.
     const bytecode = python && root && launch.venvPython && isInside(launch.venvPython, root) ? readShippedBytecode(root) : null;

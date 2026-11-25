@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  Desktop Presence — Maya app ki window se nikal kar desktop par
+//  Desktop Presence — Stonic app ki window se nikal kar desktop par
 // ═══════════════════════════════════════════════════════════════════════════
 //
 //  Do cheezein, dono user ki marzi se (title bar → Desktop):
 //
-//   1. Overlay ("Live on desktop"): Maya minimize ho to character desktop
+//   1. Overlay ("Live on desktop"): Stonic minimize ho to character desktop
 //      par reh jata hai — ek chhoti, shaffaf, hamesha-upar window. Pakki jagah:
 //      screen ke UPAR BEECH mein, upar ke kinare se juda kaala "notch" (Taby /
 //      Dynamic Island jaisa — Usman, 7 Nov). Chup ho to chhota; hover ya baat
@@ -13,9 +13,9 @@
 //      New | Classic, aur wapas poori app. Khaali
 //      hissa click-through hai: character ke aas paas ka click neeche wali app
 //      ko jata hai. Bari window wapas khuli → overlay ghayab (ek waqt mein ek
-//      hi Maya nazar aaye).
+//      hi Stonic nazar aaye).
 //
-//   2. Living wallpaper (sirf Windows): desktop icons ke PEECHE Maya ki
+//   2. Living wallpaper (sirf Windows): desktop icons ke PEECHE Stonic ki
 //      apni duniya — ek window jo wallpaper ki satah par lagti hai
 //      (desktop-presence-native.js). Character jahan khara ho roshni wahin;
 //      bole to roshni zara tez (lehrein nahi). Bari window / koi app desktop dhaanp le to rendering
@@ -32,11 +32,11 @@
 //  minimize hai; wallpaper na lage to toggle khud band ho kar wajah batata hai.
 //
 //  3. Background (Start with Windows, 24 Nov 2026): PC start par bari window
-//     CHHUPI chalti hai (taskbar mein bhi nahi) aur floating hi Maya ka
+//     CHHUPI chalti hai (taskbar mein bhi nahi) aur floating hi Stonic ka
 //     chehra hota hai — floating ka apna on/off us waqt nahi dekha jata (yehi
 //     setting ka waada hai). Floating abhi na dikh sake (Face Lock, login /
 //     net nahi) to bhi background bana rehta hai: app tayyar hote hi floating
-//     khud aata hai, aur tab tak Maya Start menu / desktop icon se foran
+//     khud aata hai, aur tab tak Stonic Start menu / desktop icon se foran
 //     khulti hai. Sirf user ka "Turn off floating" background khatam karta hai.
 
 const { app, BrowserWindow, ipcMain, screen, powerMonitor } = require('electron');
@@ -141,7 +141,7 @@ class DesktopPresence {
     this.loadPage = loadPage;
     this.isLocked = typeof isLocked === 'function' ? isLocked : () => false;
     this.openMainHook = typeof openMain === 'function' ? openMain : null;
-    // Bari window chhupi chal rahi hai (quiet start) — floating hi Maya ka chehra.
+    // Bari window chhupi chal rahi hai (quiet start) — floating hi Stonic ka chehra.
     this.background = false;
     this.native = PresenceNative.supported() ? new PresenceNative({ dir: path.join(userDataDir, 'presence') }) : null;
 
@@ -381,13 +381,13 @@ class DesktopPresence {
     this._save();
 
     // Background mein floating prefs ke baghair bhi dikhta hai — wahan "Turn off floating"
-    // bhi band hi karta hai, aur is session mein wapas nahi aata (Maya chhupi chalti rahe,
+    // bhi band hi karta hai, aur is session mein wapas nahi aata (Stonic chhupi chalti rahe,
     // Start menu / icon se foran khule).
     const turnedOff = patch.enabled === false && (before.enabled || this.background);
     if (turnedOff) {
       if (this.background) {
         this.background = false;
-        console.log('[Presence] Background mein "Turn off floating" — Maya chhupi chalti rahegi.');
+        console.log('[Presence] Background mein "Turn off floating" — Stonic chhupi chalti rahegi.');
       }
       // Floating band (⋯ → Turn off floating, ya title bar): pehle narmi se ghayab, phir window khatam.
       this.wantOverlay = false;
@@ -465,7 +465,7 @@ class DesktopPresence {
     this.wantOverlay = true;
     this._ensureOverlay();
     if (!this.overlay) {
-      // Window hi na bani: Maya chhupi tayyar rahe (icon se foran khulti hai).
+      // Window hi na bani: Stonic chhupi tayyar rahe (icon se foran khulti hai).
       this.wantOverlay = false;
       return;
     }
@@ -528,7 +528,7 @@ class DesktopPresence {
         hasShadow: false,
         // Click se kisi aur app ka focus na chheene (Windows: WS_EX_NOACTIVATE).
         focusable: false,
-        title: 'Maya',
+        title: 'Stonic',
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,
@@ -570,7 +570,7 @@ class DesktopPresence {
   /**
    * Overlay waqai screen par ho ya nahi. Baat / kaam chal raha ho to hamesha (jab tak
    * full-screen / taala nahi); chup ho to sirf 'always' mode mein, aur tab bhi nahi jab
-   * doosri app (meeting) mic le rahi ho — screen share mein Maya na aaye.
+   * doosri app (meeting) mic le rahi ho — screen share mein Stonic na aaye.
    */
   _syncOverlay() {
     const win = this.overlay;
@@ -628,7 +628,7 @@ class DesktopPresence {
   }
 
   /**
-   * Pakki jagah: jis screen par Maya khuli thi (warna primary), UPAR BEECH mein, kaam ki jagah
+   * Pakki jagah: jis screen par Stonic khuli thi (warna primary), UPAR BEECH mein, kaam ki jagah
    * (workArea) ke upar ke kinare se bilkul chipki — notch screen ke kinare se nikalta lagta hai.
    * Taskbar upar ho to us ke neeche.
    */
@@ -714,7 +714,7 @@ class DesktopPresence {
     this._refreshActive();
   }
 
-  // ── Doosri app ka mic (meeting) → chup Maya raasta chhore ───────────────
+  // ── Doosri app ka mic (meeting) → chup Stonic raasta chhore ───────────────
 
   _onMicBusy(busy) {
     if (this.micTimer) { clearTimeout(this.micTimer); this.micTimer = null; }
@@ -832,7 +832,7 @@ class DesktopPresence {
         fullscreenable: false,
         hasShadow: false,
         backgroundColor: '#04060a',
-        title: 'Maya Wallpaper',
+        title: 'Stonic Wallpaper',
         webPreferences: {
           nodeIntegration: false,
           contextIsolation: true,

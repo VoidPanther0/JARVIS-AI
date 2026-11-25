@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════════════
 //  ComputerManager — Agent S3 sidecar ka maalik (resident service)
 //
-//  Maya mein "computer use" ka ek hi darwaza yahi hai. Voice assistant
+//  Stonic mein "computer use" ka ek hi darwaza yahi hai. Voice assistant
 //  (renderer, IPC se) yahin aata hai, aur kaam ek hi Python sidecar
-//  (maya-computer/runner.py) par jata hai. Mouse ek hai, is liye ek waqt
+//  (stonic-computer/runner.py) par jata hai. Mouse ek hai, is liye ek waqt
 //  mein ek task — doosra `busy` pata hai.
 //
 //  Zindagi — Photoshop ki tarah: ek dafa khulta hai, khula rehta hai:
@@ -41,15 +41,15 @@ const num = (name, dflt) => Number(process.env[name]) || dflt;
 
 // Credentials aane ke itni der baad sidecar uthao. Ye chhota sa waqfa app ke
 // boot ke baqi kaam ko saans dene ke liye hai.
-const BOOT_DELAY_MS = num('MAYA_COMPUTER_BOOT_DELAY_MS', 5 * 1000);
+const BOOT_DELAY_MS = num('STONIC_COMPUTER_BOOT_DELAY_MS', 5 * 1000);
 // Load ke dauran sidecar har 3 s `loading` ki dhadkan bhejta hai. Itni der
 // khamoshi = process hang → maar kar dobara.
-const LOAD_STALL_MS = num('MAYA_COMPUTER_LOAD_STALL_MS', 30 * 1000);
+const LOAD_STALL_MS = num('STONIC_COMPUTER_LOAD_STALL_MS', 30 * 1000);
 // Dhadkan ke bawajood itni der mein load poora na ho to bhi dobara. Is machine
 // par 8.4 minute napa gaya hai — 15 sirf gunjaish hai.
-const LOAD_HARD_CAP_MS = num('MAYA_COMPUTER_LOAD_HARD_CAP_MS', 15 * 60 * 1000);
+const LOAD_HARD_CAP_MS = num('STONIC_COMPUTER_LOAD_HARD_CAP_MS', 15 * 60 * 1000);
 // Supervisor ka backoff: base × [1, 3, 10, 20, 40], zyada se zyada 2 minute.
-const RESTART_BACKOFF_MS = num('MAYA_COMPUTER_RESTART_BACKOFF_MS', 3 * 1000);
+const RESTART_BACKOFF_MS = num('STONIC_COMPUTER_RESTART_BACKOFF_MS', 3 * 1000);
 const RESTART_BACKOFF_STEPS = [1, 3, 10, 20, 40];
 const RESTART_MAX_MS = 2 * 60 * 1000;
 // Itni dafa lagatar process `ready` tak na pohnche to haar maan lo (state 'error').
@@ -58,15 +58,15 @@ const MAX_START_FAILURES = 5;
 // uthaya hi nahi. Agent pehle se loaded hota hai, is liye asal mein ye 1 s se
 // kam hai — 15 s sirf gunjaish. Us par process badal kar wohi task EK dafa
 // dobara; phir bhi na chale to saaf error.
-const START_TIMEOUT_MS = num('MAYA_COMPUTER_START_TIMEOUT_MS', 15 * 1000);
+const START_TIMEOUT_MS = num('STONIC_COMPUTER_START_TIMEOUT_MS', 15 * 1000);
 // Sidecar ki dhadkan (`task_starting`) start-timer ko aage sarkati hai — is
 // hadd tak (misal: pichhle stop ka thread abhi mouse chhor raha ho).
-const START_HARD_CAP_MS = num('MAYA_COMPUTER_START_HARD_CAP_MS', 3 * 60 * 1000);
+const START_HARD_CAP_MS = num('STONIC_COMPUTER_START_HARD_CAP_MS', 3 * 60 * 1000);
 // Task aaya magar agent abhi load ho raha hai: itni der intezaar, phir saaf error.
-const PENDING_MAX_MS = num('MAYA_COMPUTER_PENDING_MAX_MS', 10 * 60 * 1000);
+const PENDING_MAX_MS = num('STONIC_COMPUTER_PENDING_MAX_MS', 10 * 60 * 1000);
 // Stop ke baad `task_done` ka intezaar. Sidecar cloud call kaat kar 1-2 s mein
 // deta hai; ye sirf asli hang ka pehra hai — us par process marta hai.
-const STOP_GRACE_MS = num('MAYA_COMPUTER_STOP_GRACE_MS', 12 * 1000);
+const STOP_GRACE_MS = num('STONIC_COMPUTER_STOP_GRACE_MS', 12 * 1000);
 // Ek task zyada se zyada itni der. `max_steps` step GIN-ta hai, waqt nahi —
 // aur ek atka hua upstream call kisi step ki ginti mein nahi aata.
 const TASK_WATCHDOG_MS = 22 * 60 * 1000;
@@ -79,12 +79,12 @@ const EMERGENCY_SHORTCUT = 'Control+Alt+Escape';
 // _onExit task ko naakaam nahi likhta, naye process par dobara bhejta hai.
 const START_FAILURES = new Set(['start timeout', 'busy', 'not delivered']);
 
-// Gateway par computer-use ka apna raasta (maya-cloud-gateway/src/computer.js).
+// Gateway par computer-use ka apna raasta (stonic-cloud-gateway/src/computer.js).
 // OpenAI client is ke aage `/chat/completions` khud lagata hai.
 const GATEWAY_COMPUTER_PATH = '/v1/computer';
 
 // Lifetime (Custom API) ka rasta: user ki OpenRouter key, seedha OpenRouter.
-// Models wohi jo gateway Cloud par chalata hai (maya-cloud-gateway/src/config.js
+// Models wohi jo gateway Cloud par chalata hai (stonic-cloud-gateway/src/config.js
 // COMPUTER_PLANNER_MODEL / COMPUTER_GROUNDING_MODEL) — OpenRouter ke naamon ke
 // saath. Dono OpenRouter par mojood hain, is liye ek hi key kaafi hai.
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1';
@@ -102,7 +102,7 @@ class ComputerManager {
    *   prewarm — credentials aate hi sidecar utha kar agent garam rakhna
    *   (upar wala "Photoshop" tareeqa). Default BAND (Nov 2026): 6 Nov se app
    *   mein koi bhi is agent ko kaam nahi deta (dono voices ka PC kaam Claude
-   *   Agent SDK par hai — voice-beta-manager / maya_voice/work.py), magar
+   *   Agent SDK par hai — voice-beta-manager / stonic_voice/work.py), magar
    *   garam rakhne ki khatir har launch par ~10–13 s ka Python load hota tha
    *   (us waqt voice engine 5.8 s ki jagah 21 s mein tayyar hua) aur process
    *   hamesha RAM mein rehta tha. Ab pehla task aate hi uthta hai, aur us ke
@@ -194,7 +194,7 @@ class ComputerManager {
       if (!orKey) {
         // User ne apni keys chuni hain magar OpenRouter ki key nahi. Pehle
         // yahan sirf error lautta tha aur pichla CLOUD config salamat rehta
-        // tha — yani sidecar chup-chaap Maya Cloud par chalta rehta. Ab
+        // tha — yani sidecar chup-chaap Stonic Cloud par chalta rehta. Ab
         // byok "bina key" par tala: sidecar band, har task saaf error ke saath
         // wapas (dekho _resolvedConfig / runTask). Cloud kabhi nahi.
         if (this._mode !== 'byok' || this._byokKey !== null) {
@@ -243,7 +243,7 @@ class ComputerManager {
   /**
    * Dev-only override chal sakta hai ya nahi.
    *
-   * `MayaAi_main/.env` mein MAYA_COMPUTER_API_URL/KEY daal kar sidecar
+   * `StonicAi_main/.env` mein STONIC_COMPUTER_API_URL/KEY daal kar sidecar
    * SEEDHA OpenRouter par chalaya ja sakta hai — lab jaisa, gateway ke baghair.
    * Ye lab ke liye theek hai, magar shipped app mein ye ek KHAMOSH billing
    * bypass hai: gateway hi wo iklauti jagah hai jahan plan ka gate lagta hai
@@ -266,20 +266,20 @@ class ComputerManager {
   _resolvedConfig() {
     const env = process.env;
     const dev = this._devOverrideAllowed();
-    const devUrl = dev ? env.MAYA_COMPUTER_API_URL : null;
-    const devKey = dev ? env.MAYA_COMPUTER_API_KEY : null;
+    const devUrl = dev ? env.STONIC_COMPUTER_API_URL : null;
+    const devKey = dev ? env.STONIC_COMPUTER_API_KEY : null;
 
-    if (!dev && (env.MAYA_COMPUTER_API_URL || env.MAYA_COMPUTER_API_KEY) && !this._warnedOverride) {
+    if (!dev && (env.STONIC_COMPUTER_API_URL || env.STONIC_COMPUTER_API_KEY) && !this._warnedOverride) {
       this._warnedOverride = true;
-      console.warn('[Computer] MAYA_COMPUTER_API_* nazar-andaz — packaged build hamesha cloud gateway par chalti hai.');
+      console.warn('[Computer] STONIC_COMPUTER_API_* nazar-andaz — packaged build hamesha cloud gateway par chalti hai.');
     }
     if (dev && devUrl && !this._warnedOverride) {
       this._warnedOverride = true;
-      console.warn(`[Computer] DEV override chal raha hai: ${devUrl} — kharcha Maya Cloud par darj NAHI hoga.`);
+      console.warn(`[Computer] DEV override chal raha hai: ${devUrl} — kharcha Stonic Cloud par darj NAHI hoga.`);
     }
 
     // Lifetime (Custom API): seedha OpenRouter, user ki apni key, ASLI model
-    // naam — gateway ke logical naam ("maya-computer-planner") OpenRouter
+    // naam — gateway ke logical naam ("stonic-computer-planner") OpenRouter
     // nahi pehchanta. Kharcha user ke OpenRouter account par; hamara meter
     // yahan jaan bujh kar nahi (wo hamara paisa hai hi nahi).
     //
@@ -320,15 +320,15 @@ class ComputerManager {
       //
       // Dev par asli naam bhi chalte hain (gateway ki allowlist mein mojood
       // hain), taake do models ka muqabla kiya ja sake.
-      plannerModel: (dev && env.MAYA_COMPUTER_PLANNER_MODEL) || 'maya-computer-planner',
-      groundingModel: (dev && env.MAYA_COMPUTER_GROUNDING_MODEL) || 'maya-computer-grounding',
+      plannerModel: (dev && env.STONIC_COMPUTER_PLANNER_MODEL) || 'stonic-computer-planner',
+      groundingModel: (dev && env.STONIC_COMPUTER_GROUNDING_MODEL) || 'stonic-computer-grounding',
       // Grounding ke naap JAAN BUJH KAR khali. Runner inhein us screenshot se
       // khud nikalta hai jo wo model ko bhejta hai — aur wohi durust hai.
       // Pehle yahan '1920'/'1080' likha tha; 1080p screen par wo ittefaq se
       // sahi tha, magar 2K/4K par clicks button se khisak jate the. Dev par
       // override phir bhi mumkin hai.
-      groundingWidth: (dev && env.MAYA_COMPUTER_GROUNDING_WIDTH) || '',
-      groundingHeight: (dev && env.MAYA_COMPUTER_GROUNDING_HEIGHT) || '',
+      groundingWidth: (dev && env.STONIC_COMPUTER_GROUNDING_WIDTH) || '',
+      groundingHeight: (dev && env.STONIC_COMPUTER_GROUNDING_HEIGHT) || '',
     };
   }
 
@@ -564,17 +564,17 @@ class ComputerManager {
       ...pythonSpawnEnv(process.env, launch),
       PYTHONIOENCODING: 'utf-8',
       PYTHONUNBUFFERED: '1',
-      MAYA_COMPUTER_API_URL: cfg.apiUrl,
-      MAYA_COMPUTER_API_KEY: cfg.apiKey,
-      MAYA_COMPUTER_ROUTE: cfg.route || 'cloud',
-      MAYA_COMPUTER_PLANNER_MODEL: cfg.plannerModel,
-      MAYA_COMPUTER_GROUNDING_MODEL: cfg.groundingModel,
+      STONIC_COMPUTER_API_URL: cfg.apiUrl,
+      STONIC_COMPUTER_API_KEY: cfg.apiKey,
+      STONIC_COMPUTER_ROUTE: cfg.route || 'cloud',
+      STONIC_COMPUTER_PLANNER_MODEL: cfg.plannerModel,
+      STONIC_COMPUTER_GROUNDING_MODEL: cfg.groundingModel,
       // '0' = "khud hisaab karo". Yahan khali string nahi bheji ja sakti:
       // Windows par khali env var kabhi pohanchti hi nahi, aur phir `process.env`
       // ki purani qeemat (dev ki .env) chupke se child tak chali jati hai.
-      MAYA_COMPUTER_GROUNDING_WIDTH: String(cfg.groundingWidth || '0'),
-      MAYA_COMPUTER_GROUNDING_HEIGHT: String(cfg.groundingHeight || '0'),
-      ...(tesseract ? { MAYA_COMPUTER_TESSERACT: tesseract } : {}),
+      STONIC_COMPUTER_GROUNDING_WIDTH: String(cfg.groundingWidth || '0'),
+      STONIC_COMPUTER_GROUNDING_HEIGHT: String(cfg.groundingHeight || '0'),
+      ...(tesseract ? { STONIC_COMPUTER_TESSERACT: tesseract } : {}),
     };
 
     // `-u` jaan bujh kar nahi diya: uska kaam PYTHONUNBUFFERED=1 (upar env
@@ -588,7 +588,7 @@ class ComputerManager {
       stdio: ['pipe', 'pipe', 'pipe'],
     });
     this.child = child;
-    child.__mayaReady = false;
+    child.__stonicReady = false;
 
     readline.createInterface({ input: child.stdout }).on('line', (line) => this._onLine(child, line));
     readline.createInterface({ input: child.stderr }).on('line', (line) => {
@@ -692,7 +692,7 @@ class ComputerManager {
         this.state = 'ready';
         this.error = null;
         this.screen = ev.screen || this.screen;
-        child.__mayaReady = true;
+        child.__stonicReady = true;
         this._failures = 0;
         this._clearLoadTimers();
         this._broadcast({ event: 'agent_state', state: 'ready' });
@@ -783,8 +783,8 @@ class ComputerManager {
     const reason = err ? err.message : `exit ${code}${signal ? ` (${signal})` : ''}`;
     console.log('[Computer] Sidecar band:', reason);
     const mine = this.child === child;
-    const killedBy = child.__mayaKillReason || null;
-    const reachedReady = Boolean(child.__mayaReady);
+    const killedBy = child.__stonicKillReason || null;
+    const reachedReady = Boolean(child.__stonicReady);
 
     // Halat sirf tab badlo jab ye WAHI process ho jo abhi hamara hai. Agar
     // ise pehle hi detach kiya ja chuka hai (`_killChild`), to `this.child`
@@ -845,7 +845,7 @@ class ComputerManager {
     const child = this.child;
     if (!child) return;
     console.log('[Computer] Sidecar ko band kar rahe hain:', why);
-    child.__mayaKillReason = why;
+    child.__stonicKillReason = why;
     this.child = null;
     this.state = 'idle';
     this._clearLoadTimers();
