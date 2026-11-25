@@ -1,6 +1,6 @@
 const { BrowserWindow } = require('electron');
 
-// Tasveer wali yaadash + "Stonic aap ka chehra jaanta hai" — IPC darwaza
+// Tasveer wali yaadash + "Maya aap ka chehra jaanta hai" — IPC darwaza
 // (services/visual-memory/service.js).
 //
 // Tasveerein: Memory panel ka album, aur dono voices ka `remember_photo` tool.

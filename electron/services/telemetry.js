@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 // KYUN: customer app khareedta hai, access milta hai... aur us ke baad humein
 // kuch pata nahi chalta. Kitne log roz app kholte hain? Khareedne ke baad koi
-// wapas bhi aata hai? Aur jo kaam wo Stonic se karwate hain (New ya Classic
+// wapas bhi aata hai? Aur jo kaam wo Maya se karwate hain (New ya Classic
 // voice — dono ke peeche wohi Claude Code harness), wo hota bhi hai ya nahi?
 // In sawalon ka jawab dene ke liye ye file hai.
 //
@@ -11,11 +11,11 @@
 //   app khuli:  email (account ka), anonymous install id, app version, OS,
 //               waqt, session kitni der chali.
 //   kaam (run): wohi email / install id / version / waqt, aur sirf ginti:
-//               New ya Classic, kaunsa raasta (Stonic Cloud / apni Claude /
+//               New ya Classic, kaunsa raasta (Maya Cloud / apni Claude /
 //               OpenRouter / Gemini key), hua / nakaam / roka gaya, ghalti ki
 //               QISAM (jaise `rate_limit`), kitne qadam, kitne tool chale aur
 //               kitne nakaam, tool ke NAAM (jaise `PowerShell`), kitni der.
-//               Engine (stonic-voice agent.py `_run_end`) ye banata hai,
+//               Engine (maya-voice agent.py `_run_end`) ye banata hai,
 //               voice-beta-manager.js `_onRun` saaf kar ke yahan deta hai.
 //   onboarding ka qadam (14 Nov 2026): anonymous install id, app version,
 //               qadam ka NAAM (jaise `persona`), pichhle qadam par kitne
@@ -52,12 +52,12 @@ const crypto = require('crypto');
 const axios = { post: (...args) => require('axios').post(...args) };
 
 // ── Config ────────────────────────────────────────────────────────────────
-const DEFAULT_ENDPOINT = 'https://stonicai.com/.netlify/functions/track-app-open';
+const DEFAULT_ENDPOINT = 'https://mayaai.com/.netlify/functions/track-app-open';
 // Kaam ka hisaab alag darwaze par: purana `track-app-open` har anjaan event ko
 // "app khuli" samajh leta — galti se bhi wahan na jaye.
-const DEFAULT_RUNS_ENDPOINT = 'https://stonicai.com/.netlify/functions/track-agent-runs';
+const DEFAULT_RUNS_ENDPOINT = 'https://mayaai.com/.netlify/functions/track-agent-runs';
 // Onboarding ke qadam — apna darwaza (website: supabase/onboarding-funnel.sql).
-const DEFAULT_STEPS_ENDPOINT = 'https://stonicai.com/.netlify/functions/track-onboarding';
+const DEFAULT_STEPS_ENDPOINT = 'https://mayaai.com/.netlify/functions/track-onboarding';
 
 const SEND_TIMEOUT_MS   = 8000;   // is se lamba intezar karne ka koi faida nahi
 const FLUSH_INTERVAL_MS = 10 * 60 * 1000;
@@ -308,9 +308,9 @@ function init({ userDataDir, appVersion, machineIdFn, endpoint, runsEndpoint, st
     cfg = {
       userDataDir,
       appVersion: appVersion || 'unknown',
-      endpoint: endpoint || process.env.STONIC_TELEMETRY_ENDPOINT || DEFAULT_ENDPOINT,
-      runsEndpoint: runsEndpoint || process.env.STONIC_RUNS_ENDPOINT || DEFAULT_RUNS_ENDPOINT,
-      stepsEndpoint: stepsEndpoint || process.env.STONIC_ONBOARDING_ENDPOINT || DEFAULT_STEPS_ENDPOINT,
+      endpoint: endpoint || process.env.MAYA_TELEMETRY_ENDPOINT || DEFAULT_ENDPOINT,
+      runsEndpoint: runsEndpoint || process.env.MAYA_RUNS_ENDPOINT || DEFAULT_RUNS_ENDPOINT,
+      stepsEndpoint: stepsEndpoint || process.env.MAYA_ONBOARDING_ENDPOINT || DEFAULT_STEPS_ENDPOINT,
       machineIdFn,
     };
 

@@ -15,7 +15,7 @@
 //    mic        -> kaun si apps is lamhe mic istemal kar rahi hain (call ki pehchan)
 //    display    -> koi app screen ko jagaye hue hai (video chal rahi hai, call,
 //                  presentation). Is ke baghair video dekhta hua user "uth gaya"
-//                  gina jata tha, aur mouse hilate hi Stonic "wapas aa gaye" kehta.
+//                  gina jata tha, aur mouse hilate hi Maya "wapas aa gaye" kehta.
 //
 // ── IS SCRIPT MEIN BACKSLASH, BACKTICK AUR DOLLAR-BRACE NAHI HAIN ───────────
 //
@@ -38,7 +38,7 @@ using System.Text;
 using System.Threading;
 using Microsoft.Win32;
 
-public static class StonicWatch
+public static class MayaWatch
 {
     [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
@@ -166,7 +166,7 @@ public static class StonicWatch
     }
 }
 '@
-[StonicWatch]::Run($ParentPid, $IntervalMs)
+[MayaWatch]::Run($ParentPid, $IntervalMs)
 `;
 
 module.exports = { FOCUS_WATCH_PS1 };

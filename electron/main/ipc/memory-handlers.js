@@ -1,7 +1,7 @@
 const { ipcMain, BrowserWindow, dialog } = require('electron');
 const { LlmRelay } = require('../../services/memory/llm-relay');
 
-// Memory Core (Stonic ki apni yaadash) ke IPC handlers.
+// Memory Core (Maya ki apni yaadash) ke IPC handlers.
 //
 // Service getter se aati hai — wajah wohi jo baqi modules mein hai: handlers
 // window banne se pehle register hote hain, service baad mein banti hai.
@@ -84,7 +84,7 @@ function registerMemoryHandlers({ getMemoryService }) {
     const stamp = new Date().toISOString().slice(0, 10);
     const picked = await dialog.showSaveDialog({
       title: 'Export memory',
-      defaultPath: `stonic-memory-${stamp}.json`,
+      defaultPath: `maya-memory-${stamp}.json`,
       filters: [{ name: 'JSON', extensions: ['json'] }],
     });
     if (picked.canceled || !picked.filePath) return { ok: false, reason: 'cancelled' };

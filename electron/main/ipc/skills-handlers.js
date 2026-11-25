@@ -2,7 +2,7 @@ const { app, ipcMain, shell } = require('electron');
 const path = require('path');
 const { SkillsLibrary, PLUGIN_NAME, slugify } = require('../../services/skills/library');
 
-// Every skill in Stonic is user-authored, and they all live in ONE folder.
+// Every skill in Maya is user-authored, and they all live in ONE folder.
 //
 // That path is load-bearing: skills written by earlier versions of the app are
 // already sitting there on real installs, so it must never move. Both voice
@@ -10,7 +10,7 @@ const { SkillsLibrary, PLUGIN_NAME, slugify } = require('../../services/skills/l
 // whose `skills/` is a junction to this folder (services/skills/library.js), and
 // Classic's Gemini voice through `load_skill` below.
 function getCustomSkillsDir() {
-  return path.join(app.getPath('documents'), 'Stonic Data', 'skills', 'custom');
+  return path.join(app.getPath('documents'), 'Maya Data', 'skills', 'custom');
 }
 
 let library = null;
@@ -32,7 +32,7 @@ function getSkillsLibrary() {
 // Older renderer code sends `folderName` or `skillName`; both are the skill's name now.
 const nameFrom = (args) => String(args?.name || args?.folderName || args?.skillName || '');
 
-// The assistant may say "stonic:weekly-report" (Claude's name for it) or an old
+// The assistant may say "maya:weekly-report" (Claude's name for it) or an old
 // display name ("Weekly Report") — all of them mean the folder "weekly-report".
 function readByAnyName(lib, raw) {
   const name = String(raw || '').trim().replace(/^\/+/, '');

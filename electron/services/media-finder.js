@@ -618,7 +618,7 @@ function createMediaFinder({ fetchImpl } = {}) {
     if (request.url) {
       const link = parseLink(request.url);
       if (!link) {
-        const err = new Error('This link is not a video link Stonic can play (YouTube, TikTok, Instagram, Facebook, Vimeo, Dailymotion).');
+        const err = new Error('This link is not a video link Maya can play (YouTube, TikTok, Instagram, Facebook, Vimeo, Dailymotion).');
         err.code = 'UNSUPPORTED_LINK';
         throw err;
       }

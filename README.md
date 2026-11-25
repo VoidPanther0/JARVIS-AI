@@ -1,6 +1,6 @@
 # JARVIS AI
 
-JARVIS AI is an advanced desktop assistant rebuilt from Stonic AI in the same
+JARVIS AI is an advanced desktop assistant rebuilt from Maya AI in the same
 stack: Electron + JavaScript (main/renderer) with a Python voice/computer runtime.
 
 ## Run

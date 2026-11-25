@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  Push-to-talk — shortcut daba ke rakho to Stonic sunta hai, chhodo to jawab
+//  Push-to-talk — shortcut daba ke rakho to Maya sunta hai, chhodo to jawab
 // ═══════════════════════════════════════════════════════════════════════════
 //
-//  Settings → AI Engine → "How Stonic listens":
+//  Settings → AI Engine → "How Maya listens":
 //    conversation  (default) — Talk dabao, phir End tak har waqt sunta hai
 //    ptt                     — sirf shortcut (ya floating ka mic) dabane par
 //
@@ -51,7 +51,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
-public static class StonicPtt
+public static class MayaPtt
 {
     [StructLayout(LayoutKind.Sequential)] struct POINT { public int X; public int Y; }
     [StructLayout(LayoutKind.Sequential)] struct MSG { public IntPtr hwnd; public uint message; public IntPtr wParam; public IntPtr lParam; public uint time; public POINT pt; }
@@ -186,7 +186,7 @@ public static class StonicPtt
     }
 }
 '@
-[StonicPtt]::Run($ParentPid, [uint32]$Mods, [uint32]$Vk, [uint32]$Scan)
+[MayaPtt]::Run($ParentPid, [uint32]$Mods, [uint32]$Vk, [uint32]$Scan)
 `;
 
 const supportedPlatform = () => process.platform === 'win32';
@@ -227,7 +227,7 @@ class PushToTalk {
     this._sync();
   }
 
-  /** Stonic Voice ka engine (voice-beta-manager) baat-cheet shuru karte waqt yahi poochta hai. */
+  /** Maya Voice ka engine (voice-beta-manager) baat-cheet shuru karte waqt yahi poochta hai. */
   mode() {
     return this.prefs.mode;
   }

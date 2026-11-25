@@ -99,7 +99,7 @@ const INVOKE_CHANNELS = new Set([
     'get-openrouter-token',
     'get-prefer-direct-gemini',
     'get-processes',
-    'get-stonic-data-path',
+    'get-maya-data-path',
     'get-stored-user',
     'get-sub-agent-config',
     'get-voice-assistant-mode',
@@ -228,11 +228,11 @@ const INVOKE_CHANNELS = new Set([
     'startup:get-state',
     'startup:set-enabled',
     'startup:used',
-    'stonic-cloud-device-key-clear',
-    'stonic-cloud-device-key-get',
-    'stonic-cloud-device-key-save',
-    'stonic-cloud-supabase-config',
-    'stonic-cloud-token',
+    'maya-cloud-device-key-clear',
+    'maya-cloud-device-key-get',
+    'maya-cloud-device-key-save',
+    'maya-cloud-supabase-config',
+    'maya-cloud-token',
     'subscription-portal',
     'support-contact',
     'system-cancel-command',
@@ -292,7 +292,7 @@ const INVOKE_CHANNELS = new Set([
 const isAllowed = (channel) => typeof channel === 'string' && INVOKE_CHANNELS.has(channel);
 const blocked = (kind, channel) => {
     const err = new Error(`No handler registered for '${String(channel)}' (blocked by preload allowlist, ${kind})`);
-    console.warn('[Stonic][ipc]', err.message);
+    console.warn('[Maya][ipc]', err.message);
     return err;
 };
 
@@ -304,7 +304,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getZoomFactor: () => webFrame.getZoomFactor(),
     // Start with Windows: ye window PC start par chupchaap uthi (main.js RENDERER_QUIET_ARG).
     // Sync chahiye — boot ki awaaz pehle hi render par bajti hai. Baad ki halat 'startup:launch' event se.
-    launch: { quiet: (() => { try { return process.argv.includes('--stonic-quiet-launch'); } catch { return false; } })() },
+    launch: { quiet: (() => { try { return process.argv.includes('--maya-quiet-launch'); } catch { return false; } })() },
     invoke: (channel, ...args) =>
         isAllowed(channel) ? ipcRenderer.invoke(channel, ...args) : Promise.reject(blocked('invoke', channel)),
     send: (channel, ...args) => {

@@ -71,8 +71,8 @@ function registerSystemHandlers() {
       const response = await axios.get('https://openrouter.ai/api/v1/models', {
         headers: {
           Authorization: `Bearer ${apiKey}`,
-          'HTTP-Referer': 'https://stonic.ai',
-          'X-Title': 'Stonic AI',
+          'HTTP-Referer': 'https://maya.ai',
+          'X-Title': 'Maya AI',
         },
       });
 
@@ -91,18 +91,18 @@ function registerSystemHandlers() {
         console.warn(`[FS-OP] WARNING: AI used literal template variable "${targetPath}". Fixing...`);
         resolvedPath = targetPath.replace(/\$\{?resolvedNotesPath\}?[\\/]?/g, '');
         if (!resolvedPath || resolvedPath === targetPath) {
-          resolvedPath = app.getPath('documents') + path.sep + 'Stonic Data';
+          resolvedPath = app.getPath('documents') + path.sep + 'Maya Data';
         } else {
-          resolvedPath = path.join(app.getPath('documents'), 'Stonic Data', resolvedPath);
+          resolvedPath = path.join(app.getPath('documents'), 'Maya Data', resolvedPath);
         }
         console.log(`[FS-OP] Fixed literal variable: ${targetPath} -> ${resolvedPath}`);
       } else if (targetPath && !path.isAbsolute(targetPath)) {
         if (targetPath.startsWith('Documents\\') || targetPath.startsWith('Documents/')) {
           resolvedPath = path.join(app.getPath('documents'), targetPath.substring('Documents\\'.length));
-        } else if (targetPath.startsWith('Stonic Data\\') || targetPath.startsWith('Stonic Data/')) {
+        } else if (targetPath.startsWith('Maya Data\\') || targetPath.startsWith('Maya Data/')) {
           resolvedPath = path.join(app.getPath('documents'), targetPath);
         } else {
-          resolvedPath = path.join(app.getPath('documents'), 'Stonic Data', targetPath);
+          resolvedPath = path.join(app.getPath('documents'), 'Maya Data', targetPath);
         }
         console.log(`[FS-OP] Resolved relative path: ${targetPath} -> ${resolvedPath}`);
       }
@@ -113,18 +113,18 @@ function registerSystemHandlers() {
           console.warn(`[FS-OP] WARNING: AI used literal template variable in dest "${dest}". Fixing...`);
           resolvedDest = dest.replace(/\$\{?resolvedNotesPath\}?[\\/]?/g, '');
           if (!resolvedDest || resolvedDest === dest) {
-            resolvedDest = app.getPath('documents') + path.sep + 'Stonic Data';
+            resolvedDest = app.getPath('documents') + path.sep + 'Maya Data';
           } else {
-            resolvedDest = path.join(app.getPath('documents'), 'Stonic Data', resolvedDest);
+            resolvedDest = path.join(app.getPath('documents'), 'Maya Data', resolvedDest);
           }
           console.log(`[FS-OP] Fixed literal variable in dest: ${dest} -> ${resolvedDest}`);
         } else if (!path.isAbsolute(dest)) {
           if (dest.startsWith('Documents\\') || dest.startsWith('Documents/')) {
             resolvedDest = path.join(app.getPath('documents'), dest.substring('Documents\\'.length));
-          } else if (dest.startsWith('Stonic Data\\') || dest.startsWith('Stonic Data/')) {
+          } else if (dest.startsWith('Maya Data\\') || dest.startsWith('Maya Data/')) {
             resolvedDest = path.join(app.getPath('documents'), dest);
           } else {
-            resolvedDest = path.join(app.getPath('documents'), 'Stonic Data', dest);
+            resolvedDest = path.join(app.getPath('documents'), 'Maya Data', dest);
           }
         }
       }
@@ -209,19 +209,19 @@ function registerSystemHandlers() {
       settled = true;
       activeExecCommands.delete(resolvedCommandId);
       resolve({
-        success: !error && !child.__stonicCancelled,
+        success: !error && !child.__mayaCancelled,
         commandId: resolvedCommandId,
         stdout: stdout ? stdout.toString().substring(0, 100000) : '',
         stderr: stderr ? stderr.toString().substring(0, 50000) : '',
-        error: child.__stonicCancelled ? 'Command cancelled by user.' : error?.message,
-        cancelled: Boolean(child.__stonicCancelled),
+        error: child.__mayaCancelled ? 'Command cancelled by user.' : error?.message,
+        cancelled: Boolean(child.__mayaCancelled),
         exitCode: error?.code || 0,
       });
     });
-    child.__stonicCancelled = false;
+    child.__mayaCancelled = false;
     activeExecCommands.set(resolvedCommandId, {
       cancel: async () => {
-        child.__stonicCancelled = true;
+        child.__mayaCancelled = true;
         await killProcessTree(child);
       },
     });
@@ -303,7 +303,7 @@ function registerSystemHandlers() {
       const MAX_DEPTH = 5;
       const MAX_FILE_SIZE = 5 * 1024 * 1024;
       const results = [];
-      const basePath = searchPath || path.join(app.getPath('documents'), 'Stonic Data');
+      const basePath = searchPath || path.join(app.getPath('documents'), 'Maya Data');
 
       if (!fs.existsSync(basePath)) {
         return { success: false, error: `Path does not exist: ${basePath}` };
@@ -372,7 +372,7 @@ function registerSystemHandlers() {
 
   ipcMain.handle('save-image', async (_event, { base64Data }) => {
     try {
-      const filePath = path.join(app.getPath('downloads'), `stonic_ai_${Date.now()}.png`);
+      const filePath = path.join(app.getPath('downloads'), `maya_ai_${Date.now()}.png`);
       const buffer = Buffer.from(base64Data.replace(/^data:image\/\w+;base64,/, ''), 'base64');
       fs.writeFileSync(filePath, buffer);
       return filePath;
@@ -400,7 +400,7 @@ function registerSystemHandlers() {
       if (!(area.width > 0 && area.height > 0)) return { success: false, error: 'invalid_area' };
       const image = await contents.capturePage(area);
       if (image.isEmpty()) return { success: false, error: 'empty_capture' };
-      const filePath = path.join(app.getPath('downloads'), `stonic_visual_${Date.now()}.png`);
+      const filePath = path.join(app.getPath('downloads'), `maya_visual_${Date.now()}.png`);
       fs.writeFileSync(filePath, image.toPNG());
       return { success: true, path: filePath };
     } catch (error) {
@@ -419,7 +419,7 @@ function registerSystemHandlers() {
       const { captureVisualPage } = require('../../services/visual-page-capture');
       const shot = await captureVisualPage({ html: payload?.html, width: payload?.width, height: payload?.height });
       const slug = String(payload?.title || '').replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 48).toLowerCase();
-      const filePath = path.join(app.getPath('downloads'), `stonic_visual_${slug ? `${slug}_` : ''}${Date.now()}.png`);
+      const filePath = path.join(app.getPath('downloads'), `maya_visual_${slug ? `${slug}_` : ''}${Date.now()}.png`);
       await fs.promises.writeFile(filePath, shot.png);
       return { success: true, path: filePath, width: shot.width, height: shot.height };
     } catch (error) {
@@ -514,7 +514,7 @@ function registerSystemHandlers() {
     }
   });
 
-  // `anyType`: Stonic Voice (Claude Agent SDK) har file khud kholta hai — tasveer
+  // `anyType`: Maya Voice (Claude Agent SDK) har file khud kholta hai — tasveer
   // aur PDF Read se, baqi PowerShell se — is liye wahan koi qaid nahi. Classic
   // (Gemini Live) sirf neeche wali qisam samajhta hai.
   ipcMain.handle('pick-and-read-files', async (_event, opts) => {
@@ -580,7 +580,7 @@ function registerSystemHandlers() {
   ipcMain.handle('send-notification', async (_event, { title, body, icon }) => {
     try {
       const notification = new Notification({
-        title: title || 'Stonic AI',
+        title: title || 'Maya AI',
         body: body || '',
         icon: icon || undefined,
       });

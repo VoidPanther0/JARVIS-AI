@@ -112,7 +112,7 @@ class VisualMemoryService {
     if (typeof src.path === 'string' && src.path.trim()) {
       const file = src.path.trim();
       if (!path.isAbsolute(file) || file.includes('\0')) return { ok: false, text: 'That picture path is not usable.' };
-      if (!PICTURE_FILE.test(file)) return { ok: false, text: 'That file is not a picture Stonic can keep (JPG or PNG).' };
+      if (!PICTURE_FILE.test(file)) return { ok: false, text: 'That file is not a picture Maya can keep (JPG or PNG).' };
       // Chehron ki file (aur us ka folder) kabhi tasveer ka zariya nahi.
       const facesRoot = path.resolve(this.faces.rootDir).toLowerCase();
       if (path.resolve(file).toLowerCase().startsWith(facesRoot)) return { ok: false, text: 'That file cannot be used.' };
@@ -132,7 +132,7 @@ class VisualMemoryService {
 
   async savePhoto({ image, title, story, people, feeling, source } = {}) {
     const store = await this._readyStore();
-    if (!store) return { ok: false, text: 'Memory is not available until they sign in to Stonic.' };
+    if (!store) return { ok: false, text: 'Memory is not available until they sign in to Maya.' };
     const picture = this._picture(image);
     if (!picture.ok) return picture;
     return this.photos.save(store, { image: picture.bytes, title, story, people, feeling, source });
@@ -222,7 +222,7 @@ class VisualMemoryService {
       const res = await this.photos.save(store, {
         image: bytes,
         title: title || (name ? `${name}'s face` : 'My face'),
-        story: story || `${name ? `${name}'s` : 'Their'} own face, taken with the webcam so Stonic knows how ${name || 'they'} look${name ? 's' : ''}.`,
+        story: story || `${name ? `${name}'s` : 'Their'} own face, taken with the webcam so Maya knows how ${name || 'they'} look${name ? 's' : ''}.`,
         people: title && name ? [name] : [],
         ...(feeling ? { feeling } : {}),
         source: 'camera',

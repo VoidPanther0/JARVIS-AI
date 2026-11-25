@@ -3,42 +3,42 @@
 //  Start with Windows — Settings → Startup (Usman, 24 Nov 2026)
 // ═══════════════════════════════════════════════════════════════════════════
 //
-//  User ki marzi, default OFF. ON ho to PC on ho kar login hote hi Stonic khud
+//  User ki marzi, default OFF. ON ho to PC on ho kar login hote hi Maya khud
 //  uthta hai — chupchaap: bari window nahi khulti, awaaz nahi bajti, sirf
 //  floating nazar aata hai (main.js ka "quiet start"). App ke andar jana ho to
-//  floating ka button (ya Start menu ka Stonic icon).
+//  floating ka button (ya Start menu ka Maya icon).
 //
 //  Windows ka apna raasta: HKCU\...\CurrentVersion\Run mein ek value (Electron
-//  setLoginItemSettings, naam = AppUserModelId "com.stonicai.desktop"). Task
+//  setLoginItemSettings, naam = AppUserModelId "com.mayaai.desktop"). Task
 //  Manager → Startup apps aur Settings → Apps → Startup isi ko dikhate / band
 //  karte hain. Wahan band ho to hum bhi OFF dikhate hain aur khud kabhi dobara
 //  on NAHI karte — Windows ki halat hi sach hai, alag file nahi.
 //
 //  🔴 exe ka raasta QUOTES mein: Electron `path` ko jaise ka taisa likhta hai,
-//  aur "...\Programs\Stonic AI\Stonic AI.exe" mein space hai. Bina quotes ke
-//  Windows pehle "...\Programs\Stonic" dhoondta (unquoted-path ka purana
+//  aur "...\Programs\Maya AI\Maya AI.exe" mein space hai. Bina quotes ke
+//  Windows pehle "...\Programs\Maya" dhoondta (unquoted-path ka purana
 //  masla, aur ek security soorakh bhi). Asli registry par naapa (24 Nov):
-//  quotes ke saath value = "C:\...\Stonic AI.exe" --stonic-startup — bilkul
+//  quotes ke saath value = "C:\...\Maya AI.exe" --maya-startup — bilkul
 //  OneDrive / Edge ki entries jaisi.
 //
 //  Dev (npm run electron:dev) mein registry ko haath NAHI lagta: wahan exe
 //  node_modules ka electron.exe hai, jo login par Vite ke baghair khali khulta.
 //  Dev mein switch sirf ek file mein yaad rehta hai; quiet start aazmane ke
-//  liye: STONIC_SIMULATE_STARTUP=1 (dekho isQuietLaunch).
+//  liye: MAYA_SIMULATE_STARTUP=1 (dekho isQuietLaunch).
 
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-/** Windows login par Stonic isi nishan ke saath chalta hai — isi se pata chalta hai ke ye "quiet start" hai. */
-const QUIET_LAUNCH_ARG = '--stonic-startup';
+/** Windows login par Maya isi nishan ke saath chalta hai — isi se pata chalta hai ke ye "quiet start" hai. */
+const QUIET_LAUNCH_ARG = '--maya-startup';
 /** Bari window ke renderer (preload) ko: tum chupchaap uthe ho — boot ki awaaz / tour abhi nahi. */
-const RENDERER_QUIET_ARG = '--stonic-quiet-launch';
+const RENDERER_QUIET_ARG = '--maya-quiet-launch';
 
 /**
  * Ye process Windows login ne chalaya (ya dev mein us ki naqal)?
  * @param {string[]} argv
- * @param {{ simulate?: string }} [opts] dev ka STONIC_SIMULATE_STARTUP
+ * @param {{ simulate?: string }} [opts] dev ka MAYA_SIMULATE_STARTUP
  */
 function isQuietLaunch(argv, { simulate } = {}) {
   if (Array.isArray(argv) && argv.includes(QUIET_LAUNCH_ARG)) return true;
@@ -78,7 +78,7 @@ class LaunchAtLogin {
 
   /**
    * @returns {{ supported: boolean, enabled: boolean, blockedBySystem: boolean, dev: boolean, error?: string }}
-   *   blockedBySystem = Stonic ki entry hai magar Task Manager / Settings → Startup apps mein band.
+   *   blockedBySystem = Maya ki entry hai magar Task Manager / Settings → Startup apps mein band.
    */
   getState() {
     if (!this.supported()) return { supported: false, enabled: false, blockedBySystem: false, dev: false };
@@ -161,13 +161,13 @@ class LaunchAtLogin {
 // ── PC start ke foran baad: kab uthna hai ──────────────────────────────────
 //
 // Login ke pehle minute mein Windows, antivirus, OneDrive, browser sab ek saath
-// uthte hain. Usi waqt Stonic ka ~3MB bundle aur React boot PC ko aur bhaari
+// uthte hain. Usi waqt Maya ka ~3MB bundle aur React boot PC ko aur bhaari
 // karta. Is liye bari window ka page tab load hota hai jab:
 //   - kam se kam MIN waqt guzar jaye (taza boot par zyada), aur
 //   - CPU do lagataar naap mein narm ho (saare cores mila kar ≤ CALM_BUSY), aur
 //   - network jura ho (warna login check fail → floating hi nahi aata).
-// Jo bhi ho, MAX ke baad zaroor — PC kabhi narm na ho to bhi Stonic aaye.
-// User beech mein khud Stonic khole to intezaar foran khatam (`release`).
+// Jo bhi ho, MAX ke baad zaroor — PC kabhi narm na ho to bhi Maya aaye.
+// User beech mein khud Maya khole to intezaar foran khatam (`release`).
 
 const QUIET_DEFAULTS = Object.freeze({
   freshBootUptimeS: 180, // is se kam uptime = PC abhi abhi on hua

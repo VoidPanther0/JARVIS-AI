@@ -258,14 +258,14 @@ const TURN_FLAGS = {
 };
 
 /**
- * Wo text jo insaan ne nahi kaha — Stonic ke apne khud-kaar prompts. Ye turn
+ * Wo text jo insaan ne nahi kaha — Maya ke apne khud-kaar prompts. Ye turn
  * ke taur par likhe jate hain (record mukammal rahe) magar kabhi yaad nahi
  * bante. Lens bhi `[Automated record` ko isi tarah chhorta hai.
  */
 const AUTOMATED_PREFIXES = [
   '[Automated record',
-  '[Memory note via Stonic',
-  '[Memory request via Stonic',
+  '[Memory note via Maya',
+  '[Memory request via Maya',
   '[MEMORY NOTE]',
   '[SYSTEM_MEMORY_INJECTION]',
 ];

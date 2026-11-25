@@ -4,13 +4,13 @@
 //  JAGAH (lifetime — kabhi nahi badalni)
 // ════════════════════════════════════════════════════════════════════════════
 //
-//   %APPDATA%\Stonic AI\Memory\<account>\
+//   %APPDATA%\Maya AI\Memory\<account>\
 //
-//  - App ke version / generation (stonic_gen3, gen4 …) se AZAAD: userData ka
+//  - App ke version / generation (maya_gen3, gen4 …) se AZAAD: userData ka
 //    folder har generation ka alag hota hai, yaadash ka nahi.
 //  - Install folder se bahar — update, repair, reinstall kuch nahi chhoota.
 //    Installer ka `deleteAppDataOnUninstall` abhi `false` hai; isay `true` kiya
-//    to uninstall par electron-builder `%APPDATA%\Stonic AI` bhi mita deta hai
+//    to uninstall par electron-builder `%APPDATA%\Maya AI` bhi mita deta hai
 //    (yaani poori yaadash). Wo flag badalne se pehle ye yaad rakhein.
 //  - Documents mein NAHI: Documents aksar OneDrive par hota hai, aur zaati
 //    yaadash chupke se cloud par nahi jani chahiye.
@@ -41,7 +41,7 @@ const OFF = (reason) => ({ ok: false, enabled: false, reason });
 
 /** Yaadash ka root — har generation ke liye wohi. */
 function memoryRootFor(appDataDir) {
-  return path.join(appDataDir, 'Stonic AI', 'Memory');
+  return path.join(appDataDir, 'Maya AI', 'Memory');
 }
 
 class FileMemoryService extends EventEmitter {
@@ -259,10 +259,10 @@ class FileMemoryService extends EventEmitter {
 
   async _toolStore() {
     if (!this.enabled) return { error: { ok: false, text: 'Memory is turned off on this PC.' } };
-    if (!this.current()) return { error: { ok: false, text: 'Memory is not available until they sign in to Stonic.' } };
+    if (!this.current()) return { error: { ok: false, text: 'Memory is not available until they sign in to Maya.' } };
     await this.whenReady();
     const store = this.current();
-    if (!store) return { error: { ok: false, text: 'Memory is not available until they sign in to Stonic.' } };
+    if (!store) return { error: { ok: false, text: 'Memory is not available until they sign in to Maya.' } };
     return { store };
   }
 

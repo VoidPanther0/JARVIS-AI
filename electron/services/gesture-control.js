@@ -112,7 +112,7 @@ class GestureControl {
   start() {
     if (this.phase !== 'off') return this.getState();
     if (this.isLocked()) {
-      this.error = 'Unlock Stonic first.';
+      this.error = 'Unlock Maya first.';
       this._broadcast();
       return this.getState();
     }
@@ -202,7 +202,7 @@ class GestureControl {
         alwaysOnTop: true,
         hasShadow: false,
         focusable: false,
-        title: 'Stonic Gesture',
+        title: 'Maya Gesture',
         webPreferences: {
           preload: PRELOAD,
           contextIsolation: true,
@@ -317,7 +317,7 @@ class GestureControl {
         m.scroll(num(cmd.dx), num(cmd.dy));
         return;
       case 'action':
-        if (cmd.id === 'stonic') {
+        if (cmd.id === 'maya') {
           if (!this.isLocked()) this.onSummon();
         } else if (MOTOR_ACTIONS.has(cmd.id)) {
           m.action(cmd.id);

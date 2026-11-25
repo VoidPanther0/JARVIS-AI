@@ -1,13 +1,13 @@
 'use strict';
 // ═══════════════════════════════════════════════════════════════
-//  Web search — Stonic Voice (New / Beta) ka `web_search` tool
+//  Web search — Maya Voice (New / Beta) ka `web_search` tool
 //
 //  Beta ka dimagh "web_search" maange to renderer (lib/beta/agent.ts) yahan
 //  IPC se aata hai. Search main process mein is liye hai ke Beta ki chabiyan
 //  sirf yahin rehti hain (voice-beta-manager.js) — renderer ko kabhi poori
 //  chabi nahi milti. Raasta wohi jo user ne Beta Settings mein chuna:
 //
-//    Stonic Cloud   gateway ka /v1/search (Vertex par Google Search, user ke
+//    Maya Cloud   gateway ka /v1/search (Vertex par Google Search, user ke
 //                   plan ke andar). Koi key nahi.
 //    Custom API     1. user ki Gemini key — Google Search grounding.
 //                   2. Gemini se na ho sake to Claude ki apni web search, usi
@@ -121,7 +121,7 @@ async function postJson(fetchImpl, url, headers, body, timeoutMs) {
 
 const shortMessage = (value, limit = 220) => String(value || '').replace(/\s+/g, ' ').trim().slice(0, limit);
 
-// ── Stonic Cloud ─────────────────────────────────────────────────────────────
+// ── Maya Cloud ─────────────────────────────────────────────────────────────
 
 /** Gateway ka /v1/search (search.js). Jawab: { text, sources: [{title, uri}] }. */
 async function searchCloud({ url, token, query, fetchImpl = fetch }) {
@@ -253,8 +253,8 @@ async function searchAnthropic({ key, query, fetchImpl = fetch, now = () => new 
 async function searchOpenRouter({ key, query, fetchImpl = fetch, now = () => new Date() }) {
   const res = await postJson(fetchImpl, OPENROUTER_URL, {
     authorization: `Bearer ${key}`,
-    'HTTP-Referer': 'https://stonicai.com',
-    'X-Title': 'Stonic',
+    'HTTP-Referer': 'https://mayaai.com',
+    'X-Title': 'Maya',
   }, {
     model: OPENROUTER_SEARCH_MODEL,
     max_tokens: 2048,
@@ -321,11 +321,11 @@ async function searchWithOwnKeys({ keys = {}, query, fetchImpl = fetch, log = ()
 function failureText(result) {
   switch (result.code) {
     case 'cloud_no_plan':
-      return 'Web search could not run: the Stonic Cloud plan is not active. Tell the user in one short line that web search needs an active plan (stonicai.com), and continue without it.';
+      return 'Web search could not run: the Maya Cloud plan is not active. Tell the user in one short line that web search needs an active plan (mayaai.com), and continue without it.';
     case 'cloud_limit':
-      return 'Web search could not run: the Stonic Cloud usage limit is reached for now. Tell the user in one short line, and continue without the search.';
+      return 'Web search could not run: the Maya Cloud usage limit is reached for now. Tell the user in one short line, and continue without the search.';
     case 'cloud_signin':
-      return 'Web search could not run: the Stonic Cloud sign-in needs refreshing. Tell the user in one short line to sign in again from Settings.';
+      return 'Web search could not run: the Maya Cloud sign-in needs refreshing. Tell the user in one short line to sign in again from Settings.';
     case 'search_no_key':
       return 'Web search needs an API key. Tell the user in one short line to add their Gemini key (or Claude key) in New voice Settings, and continue without the search.';
     case 'search_unavailable':

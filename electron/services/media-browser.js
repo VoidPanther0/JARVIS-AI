@@ -7,7 +7,7 @@
 //  hai. Awaaz ke hukm (ruk jao, chalao, agla, pichla) → `media:control` →
 //  Windows ka media control (wohi jo keyboard ki play/pause keys chalati hain).
 //
-//  Pehle yahan Stonic ka apna player tha (Electron window + YouTube embed).
+//  Pehle yahan Maya ka apna player tha (Electron window + YouTube embed).
 //  6 Nov 2026 hataya: user ke ghar ke internet par us mein video baar baar
 //  atakti thi jabke wohi video Chrome mein smooth chalti thi; kuch label
 //  videos (Kesariya) embed mein kabhi chalti hi nahi theen. Browser mein user
@@ -196,7 +196,7 @@ function createMediaBrowser({
   }
 
   async function play(args = {}) {
-    if (locked()) return { ok: false, code: 'LOCKED', error: 'Stonic is locked right now.' };
+    if (locked()) return { ok: false, code: 'LOCKED', error: 'Maya is locked right now.' };
     const request = {
       query: typeof args.query === 'string' ? args.query : '',
       mode: args.mode,
@@ -234,7 +234,7 @@ function createMediaBrowser({
     let action = String(args.action || '').toLowerCase();
     if (action === 'close' || action === 'stop') action = 'pause';
     if (action === 'pick') {
-      if (locked()) return { ok: false, code: 'LOCKED', error: 'Stonic is locked right now.' };
+      if (locked()) return { ok: false, code: 'LOCKED', error: 'Maya is locked right now.' };
       const n = Math.floor(Number(args.number));
       const item = last && last.items[n - 1];
       if (!item) return { ok: false, code: 'NO_LIST', error: last ? `There is no number ${n} in the last list.` : 'Nothing was searched yet.' };

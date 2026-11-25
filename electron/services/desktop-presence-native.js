@@ -28,7 +28,7 @@
 //
 //   3. Koi DOOSRI app (Zoom / Meet / Teams) mic le rahi hai? Windows ke audio system
 //      (Core Audio) se: har chalte mic (capture device) ke "sessions" mein koi ACTIVE
-//      session jo hamari apni exe / sidecars ("mic-ignore" hukm) ka nahi. Chup Stonic
+//      session jo hamari apni exe / sidecars ("mic-ignore" hukm) ka nahi. Chup Maya
 //      meeting / screen share mein na aaye. Sirf parhta hai, mic khud nahi kholta.
 //      (Registry ki ConsentStore fehrist naye Windows par taaza nahi hoti — 13 Nov
 //      is PC par 2 Nov ke baad koi entry nahi thi, is liye wo raasta chhora.)
@@ -57,44 +57,44 @@ using System.Text;
 using System.Threading;
 
 // ── Core Audio (mic ke sessions) — sirf wohi methods jo chahiye, vtable ki tarteeb mein ──
-[ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class StonicMMDeviceEnumerator { }
+[ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")] class MayaMMDeviceEnumerator { }
 
 [ComImport, Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IStonicMMDeviceEnumerator
+interface IMayaMMDeviceEnumerator
 {
-    [PreserveSig] int EnumAudioEndpoints(int dataFlow, int stateMask, out IStonicMMDeviceCollection devices);
+    [PreserveSig] int EnumAudioEndpoints(int dataFlow, int stateMask, out IMayaMMDeviceCollection devices);
 }
 
 [ComImport, Guid("0BD7A1BE-7A1A-44DB-8397-CC5392387B5E"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IStonicMMDeviceCollection
+interface IMayaMMDeviceCollection
 {
     [PreserveSig] int GetCount(out int count);
-    [PreserveSig] int Item(int index, out IStonicMMDevice device);
+    [PreserveSig] int Item(int index, out IMayaMMDevice device);
 }
 
 [ComImport, Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IStonicMMDevice
+interface IMayaMMDevice
 {
     [PreserveSig] int Activate(ref Guid iid, int clsCtx, IntPtr activationParams, [MarshalAs(UnmanagedType.IUnknown)] out object iface);
 }
 
 [ComImport, Guid("77AA99A0-1BD6-484F-8BC7-2C654C9A9B6F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IStonicAudioSessionManager2
+interface IMayaAudioSessionManager2
 {
     [PreserveSig] int GetAudioSessionControl(IntPtr sessionGuid, int flags, out IntPtr control);
     [PreserveSig] int GetSimpleAudioVolume(IntPtr sessionGuid, int flags, out IntPtr volume);
-    [PreserveSig] int GetSessionEnumerator(out IStonicAudioSessionEnumerator sessions);
+    [PreserveSig] int GetSessionEnumerator(out IMayaAudioSessionEnumerator sessions);
 }
 
 [ComImport, Guid("E2F5BB11-0570-40CA-ACDD-3AA01277DEE8"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IStonicAudioSessionEnumerator
+interface IMayaAudioSessionEnumerator
 {
     [PreserveSig] int GetCount(out int count);
     [PreserveSig] int GetSession(int index, [MarshalAs(UnmanagedType.IUnknown)] out object session);
 }
 
 [ComImport, Guid("BFB7FF88-7239-4FC9-8FA2-07C950BE9C6D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-interface IStonicAudioSessionControl2
+interface IMayaAudioSessionControl2
 {
     [PreserveSig] int GetState(out int state);
     [PreserveSig] int GetDisplayName(out IntPtr name);
@@ -110,7 +110,7 @@ interface IStonicAudioSessionControl2
     [PreserveSig] int GetProcessId(out uint pid);
 }
 
-public static class StonicPresence
+public static class MayaPresence
 {
     delegate bool EnumProc(IntPtr hWnd, IntPtr lParam);
     delegate bool MonitorProc(IntPtr monitor, IntPtr hdc, ref RECT rect, IntPtr data);
@@ -426,7 +426,7 @@ public static class StonicPresence
 
     // Chhote huroof, raasta '#' se (C:#Program Files#...). '*' se shuru = sirf aakhir milao.
     static volatile string[] MicIgnore = new string[0];
-    static IStonicMMDeviceEnumerator Devices;
+    static IMayaMMDeviceEnumerator Devices;
     static Dictionary<uint, string> PathCache = new Dictionary<uint, string>();
 
     static string ProcessKey(uint pid)
@@ -473,26 +473,26 @@ public static class StonicPresence
 
     static bool MicBusy()
     {
-        IStonicMMDeviceCollection list = null;
+        IMayaMMDeviceCollection list = null;
         // Pid dobara istemal hote hain — raaste ki yaad har minute taazi.
         if (++MicCalls % 60 == 0) PathCache.Clear();
         try
         {
-            if (Devices == null) Devices = (IStonicMMDeviceEnumerator)new StonicMMDeviceEnumerator();
+            if (Devices == null) Devices = (IMayaMMDeviceEnumerator)new MayaMMDeviceEnumerator();
             if (Devices.EnumAudioEndpoints(E_CAPTURE, DEVICE_STATE_ACTIVE, out list) != 0 || list == null) return false;
             int count;
             if (list.GetCount(out count) != 0) return false;
             for (int i = 0; i < count; i++)
             {
-                IStonicMMDevice device = null;
+                IMayaMMDevice device = null;
                 object raw = null;
-                IStonicAudioSessionEnumerator sessions = null;
+                IMayaAudioSessionEnumerator sessions = null;
                 try
                 {
                     if (list.Item(i, out device) != 0 || device == null) continue;
                     Guid iid = IID_SESSION_MANAGER2;
                     if (device.Activate(ref iid, CLSCTX_ALL, IntPtr.Zero, out raw) != 0 || raw == null) continue;
-                    IStonicAudioSessionManager2 manager = (IStonicAudioSessionManager2)raw;
+                    IMayaAudioSessionManager2 manager = (IMayaAudioSessionManager2)raw;
                     if (manager.GetSessionEnumerator(out sessions) != 0 || sessions == null) continue;
                     int n;
                     if (sessions.GetCount(out n) != 0) continue;
@@ -502,7 +502,7 @@ public static class StonicPresence
                         try
                         {
                             if (sessions.GetSession(j, out one) != 0 || one == null) continue;
-                            IStonicAudioSessionControl2 control = (IStonicAudioSessionControl2)one;
+                            IMayaAudioSessionControl2 control = (IMayaAudioSessionControl2)one;
                             int state;
                             if (control.GetState(out state) != 0 || state != SESSION_ACTIVE) continue;
                             uint pid;
@@ -598,7 +598,7 @@ public static class StonicPresence
     }
 }
 '@
-[StonicPresence]::Run($ParentPid)
+[MayaPresence]::Run($ParentPid)
 `;
 
 const READY_TIMEOUT_MS = 20_000;

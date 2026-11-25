@@ -14,7 +14,7 @@
 // (src/lib/mind/weather.ts ka MetPoint).
 
 const ENDPOINT = 'https://api.met.no/weatherapi/locationforecast/2.0/compact';
-const USER_AGENT = 'StonicAI/3 (+https://stonicai.com)';
+const USER_AGENT = 'MayaAI/3 (+https://mayaai.com)';
 const TIMEOUT_MS = 15_000;
 const MIN_TTL_MS = 10 * 60_000;
 const DEFAULT_TTL_MS = 30 * 60_000;

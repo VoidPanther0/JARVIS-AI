@@ -5,7 +5,7 @@
   "invalidation": "unchecked-hash",
   "python": "3.11.15",
   "roots": [
-    "stonic-voice",
+    "maya-voice",
     "voice-runtime/venv/Lib/site-packages",
     "python-runtime/python/Lib"
   ],

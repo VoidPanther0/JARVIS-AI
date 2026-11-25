@@ -37,7 +37,7 @@ function registerDomainHandlers({ getMediaDir } = {}) {
   registerAwarenessHandlers({
     getAwarenessManager: () => _awarenessManager,
   });
-  // Memory Core (Stonic ki apni yaadash). Getter, same reason as above.
+  // Memory Core (Maya ki apni yaadash). Getter, same reason as above.
   registerMemoryHandlers({
     getMemoryService: () => _memoryService,
   });
@@ -47,12 +47,12 @@ function registerDomainHandlers({ getMediaDir } = {}) {
   });
   // Onboarding ka system scan (is machine ke asli haqaiq, sirf screen ke liye).
   registerOnboardingHandlers();
-  // Stonic Voice (Beta): doosra, alag voice assistant — user ki apni API keys par.
+  // Maya Voice (Beta): doosra, alag voice assistant — user ki apni API keys par.
   // Getter, same reason as above.
   registerVoiceBetaHandlers({
     getVoiceBetaManager: () => _voiceBetaManager,
   });
-  // Nayi yaadash — ek folder (%APPDATA%\Stonic AI\Memory). Getter, same reason as above.
+  // Nayi yaadash — ek folder (%APPDATA%\Maya AI\Memory). Getter, same reason as above.
   registerFileMemoryHandlers({
     getFileMemoryService: () => _fileMemoryService,
   });

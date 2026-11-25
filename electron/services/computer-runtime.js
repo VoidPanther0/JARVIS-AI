@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
-//  Stonic Computer runtime — kaunsa Python, kaunsa Tesseract
+//  Maya Computer runtime — kaunsa Python, kaunsa Tesseract
 //
-//  Sidecar (stonic-computer/runner.py) ko ek Python chahiye jis mein
+//  Sidecar (maya-computer/runner.py) ko ek Python chahiye jis mein
 //  gui-agents + pyautogui installed hon, aur OCR ke liye tesseract.exe.
 //
 //  Packaged app:  resources/computer-runtime/venv   (scripts/setup-computer-runtime.js)
@@ -42,8 +42,8 @@ function findComputerRuntimeRoot() {
 /**
  * Dev fallback ke liye lab ka venv.
  *
- * Lab folder Stonic repo ke ANDAR nahi hota — wo Desktop par apni jagah para
- * hai (`Desktop/agent-s-lab`, jabke repo `Desktop/Stonic Ai - AGI/StonicAi_main`).
+ * Lab folder Maya repo ke ANDAR nahi hota — wo Desktop par apni jagah para
+ * hai (`Desktop/agent-s-lab`, jabke repo `Desktop/Maya Ai - AGI/MayaAi_main`).
  * Is liye do level upar tak dekhna parta hai. Ek hi level dekhne se dev mein
  * hamesha "runtime not installed" milta tha — halanke venv mojood tha.
  */
@@ -67,7 +67,7 @@ function labVenvCandidates() {
  * Spawn hamesha `pythonSpawnEnv(baseEnv, launch)` ke environment ke saath.
  */
 function resolveLaunch() {
-    const override = process.env.STONIC_COMPUTER_PYTHON;
+    const override = process.env.MAYA_COMPUTER_PYTHON;
     if (override && fs.existsSync(override)) {
         return { python: override, env: {}, mode: 'override', problem: null };
     }
@@ -87,8 +87,8 @@ function resolvePython() {
 
 /** tesseract.exe ka rasta, ya null (OCR ke baghair bhi agent chalta hai). */
 function resolveTesseract() {
-    if (process.env.STONIC_COMPUTER_TESSERACT && fs.existsSync(process.env.STONIC_COMPUTER_TESSERACT)) {
-        return process.env.STONIC_COMPUTER_TESSERACT;
+    if (process.env.MAYA_COMPUTER_TESSERACT && fs.existsSync(process.env.MAYA_COMPUTER_TESSERACT)) {
+        return process.env.MAYA_COMPUTER_TESSERACT;
     }
     const root = findComputerRuntimeRoot();
     return candidates([
@@ -101,8 +101,8 @@ function resolveTesseract() {
 /** runner.py — packaged mein resources ke andar, dev mein repo mein. */
 function resolveRunnerScript() {
     return candidates([
-        process.resourcesPath ? path.join(process.resourcesPath, 'stonic-computer', 'runner.py') : null,
-        path.join(REPO_ROOT, 'stonic-computer', 'runner.py'),
+        process.resourcesPath ? path.join(process.resourcesPath, 'maya-computer', 'runner.py') : null,
+        path.join(REPO_ROOT, 'maya-computer', 'runner.py'),
     ]);
 }
 
@@ -122,18 +122,18 @@ function describeRuntime() {
     if (!python) {
         missing.push(
             `Python (computer-runtime): na bundled venv chala (${launch.problem}), na lab ka mila. `
-            + 'Chalayein `npm run build:computer-runtime`, ya STONIC_COMPUTER_PYTHON set karein. '
+            + 'Chalayein `npm run build:computer-runtime`, ya MAYA_COMPUTER_PYTHON set karein. '
             + `Dekha gaya: ${labVenvCandidates().join(' | ')}`,
         );
     }
-    if (!runner) missing.push('runner.py: stonic-computer/runner.py nahi mili.');
+    if (!runner) missing.push('runner.py: maya-computer/runner.py nahi mili.');
     return { ok: missing.length === 0, python, env: launch.env, launchMode: launch.mode, runner, tesseract: resolveTesseract(), missing };
 }
 
 /**
  * Windows ka system cursor user ki apni scheme par wapas laana.
  *
- * Sidecar (stonic_overlay.py) task ke dauran arrow/hand/I-beam ko "agent
+ * Sidecar (maya_overlay.py) task ke dauran arrow/hand/I-beam ko "agent
  * cursor" se badal deta hai aur khatam par khud wapas karta hai. Ye backstop
  * sirf us waqt ke liye hai jab sidecar ko zabardasti maara gaya ho aur uska
  * cleanup na chal saka ho. SPI_SETCURSORS registry se scheme dobara load

@@ -1,6 +1,6 @@
 """
-Stonic Wake Word Detector — Background Process
-Listens for the character's own name (and for "Stonic") and emits JSON events
+Maya Wake Word Detector — Background Process
+Listens for the character's own name (and for "Maya") and emits JSON events
 to stdout. Spawned by Electron main.js as a child process.
 
 Usage: wake_word_bg.py [--name "Ayesha"]
@@ -39,12 +39,12 @@ except ImportError:
 
 
 # ── Fuzzy Wake Word Matching ─────────────────────────────────────────────────
-# Google Speech API sometimes mis-hears "Stonic" as similar words.
+# Google Speech API sometimes mis-hears "Maya" as similar words.
 # We check if any word in the transcription is phonetically close.
 WAKE_WORD_VARIANTS = {
-    "stonic", "sonic", "tonic", "stonick", "stonik", "stdonic",
+    "maya", "sonic", "tonic", "mayak", "stonik", "stdonic",
     "iconic", "chronic", "bionic", "demonic",
-    "satanic", "stonics", "stonnick", "stink",
+    "satanic", "mayas", "stonnick", "stink",
 }
 
 
@@ -88,7 +88,7 @@ def _is_custom_name(w: str) -> bool:
     return False
 
 
-# Primary check: the character's own name, then "Stonic" and the words it is
+# Primary check: the character's own name, then "Maya" and the words it is
 # usually mis-heard as (anything ending in "nic" / "nick").
 def is_wake_word(word: str) -> bool:
     w = word.lower().strip()
@@ -109,7 +109,7 @@ def find_trigger_word(words: list) -> str | None:
     return None
 
 
-def listen_for_stonic():
+def listen_for_maya():
     r = sr.Recognizer()
     r.energy_threshold = 300
     r.dynamic_energy_threshold = True
@@ -121,7 +121,7 @@ def listen_for_stonic():
 
             r.adjust_for_ambient_noise(source, duration=0.5)
 
-            listening = " or ".join(sorted(CUSTOM_NAMES) + ["Stonic"])
+            listening = " or ".join(sorted(CUSTOM_NAMES) + ["Maya"])
             print(json.dumps({"type": "INFO", "msg": f"Listening in background for {listening}."}))
             sys.stdout.flush()
 
@@ -166,6 +166,6 @@ def listen_for_stonic():
 
 if __name__ == "__main__":
     try:
-        listen_for_stonic()
+        listen_for_maya()
     except KeyboardInterrupt:
         sys.exit(0)

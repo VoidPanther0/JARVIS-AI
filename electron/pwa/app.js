@@ -1,5 +1,5 @@
 // PWA App Logic - Enhanced for Professional UI
-class StonicRemoteApp {
+class MayaRemoteApp {
     constructor() {
         this.socket = null;
         this.token = null;
@@ -30,7 +30,7 @@ class StonicRemoteApp {
     }
 
     loadSavedToken() {
-        const saved = localStorage.getItem('stonic_token');
+        const saved = localStorage.getItem('maya_token');
         if (saved) {
             try {
                 const data = JSON.parse(saved);
@@ -170,7 +170,7 @@ class StonicRemoteApp {
     }
 
     onAuthenticated() {
-        localStorage.setItem('stonic_token', JSON.stringify({
+        localStorage.setItem('maya_token', JSON.stringify({
             token: this.token,
             savedAt: Date.now()
         }));
@@ -307,7 +307,7 @@ class StonicRemoteApp {
             this.showError('Transcription failed');
         } finally {
             this.setThinking(false);
-            if (this.thinkingIndicator) this.thinkingIndicator.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span> Stonic is analyzing...';
+            if (this.thinkingIndicator) this.thinkingIndicator.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span> Maya is analyzing...';
         }
     }
 
@@ -324,7 +324,7 @@ class StonicRemoteApp {
         const content = sender === 'ai' ? marked.parse(text) : `<p>${this.escapeHtml(text)}</p>`;
 
         messageDiv.innerHTML = `
-            <span class="message-label">${sender === 'user' ? 'Identity' : 'Stonic'}</span>
+            <span class="message-label">${sender === 'user' ? 'Identity' : 'Maya'}</span>
             <div class="message-bubble">${content}</div>
         `;
 
@@ -402,9 +402,9 @@ class StonicRemoteApp {
 
 // Initialize
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { window.app = new StonicRemoteApp(); });
+    document.addEventListener('DOMContentLoaded', () => { window.app = new MayaRemoteApp(); });
 } else {
-    window.app = new StonicRemoteApp();
+    window.app = new MayaRemoteApp();
 }
 
 // PWA Service Worker

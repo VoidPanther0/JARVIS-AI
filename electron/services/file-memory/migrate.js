@@ -4,14 +4,14 @@
 //  KYA, KAHAN SE
 // ════════════════════════════════════════════════════════════════════════════
 //
-//   1. Memory Core   %APPDATA%\stonic_gen3\memory\<account>\memory.db
+//   1. Memory Core   %APPDATA%\maya_gen3\memory\<account>\memory.db
 //                    chalti yaadein (har ek apna note), khule waade, purani
 //                    baat-cheet ke khulase (hafte ka ek note)
 //   2. Hermes        %LOCALAPPDATA%\hermes\memories\MEMORY.md + USER.md
-//                    (purane versions ki legacy Hermes yaadash; ab Stonic
+//                    (purane versions ki legacy Hermes yaadash; ab Maya
 //                    Hermes nahi chalata — ye sirf parhi jati hai)
-//   3. Purana profile Documents\Stonic Data\MEMORY.md (update_user_profile)
-//   4. memories.json %APPDATA%\stonic_gen3\memories.json (sab se purana)
+//   3. Purana profile Documents\Maya Data\MEMORY.md (update_user_profile)
+//   4. memories.json %APPDATA%\maya_gen3\memories.json (sab se purana)
 //
 //  Wohi baat do jagah ho (Hermes ki baat Memory Core mein pehle se import thi)
 //  to note ek hi banta hai.
@@ -38,7 +38,7 @@ const { parseNote } = require('./store');
 const MIGRATION_VERSION = 1;
 const MARKER_FILE = '.migration.json';
 const BACKUP_DIR = '.old-memory-backup';
-const ORIGIN = 'old-stonic-memory';
+const ORIGIN = 'old-maya-memory';
 const MAX_ATTEMPTS = 3;
 const PART_CHARS = 18_000;
 const DESCRIPTION_CHARS = 240;
@@ -187,7 +187,7 @@ function parseEntries(text) {
       if (c) t = t.slice(c[0].length);
       return { text: clean(t), noted };
     })
-    .filter((e) => e.text && !/^stonic memory system initiali[sz]ed\.?$/i.test(e.text));
+    .filter((e) => e.text && !/^maya memory system initiali[sz]ed\.?$/i.test(e.text));
 }
 
 function readText(file) {
@@ -202,14 +202,14 @@ function readExtras(sources) {
     add(parseEntries(readText(path.join(sources.legacyHermesDir, 'USER.md'))), 'Hermes notes about you');
     add(parseEntries(readText(path.join(sources.legacyHermesDir, 'MEMORY.md'))), 'Hermes notes');
   }
-  if (sources.bootstrapMemory) add(parseEntries(readText(sources.bootstrapMemory)), 'Stonic profile notes');
+  if (sources.bootstrapMemory) add(parseEntries(readText(sources.bootstrapMemory)), 'Maya profile notes');
   if (sources.memoriesJson) {
     try {
       const list = JSON.parse(readText(sources.memoriesJson) || '[]');
       if (Array.isArray(list)) {
         add(list
           .map((m) => ({ text: clean(m && (m.content || m.text)), noted: m && m.timestamp ? dateOf(Number(m.timestamp)) : '' }))
-          .filter((e) => e.text), 'Stonic saved memories');
+          .filter((e) => e.text), 'Maya saved memories');
       }
     } catch { /* kharab file — chhor do, backup mein hai */ }
   }
@@ -251,7 +251,7 @@ function planMigration({ legacy, extras, taken, now }) {
     const noted = dateOf(Number(row.mentioned_at) || Number(row.recorded_at));
     const lines = [header(rel.replace(/\.md$/, ''), main, OFFICIAL_TYPE[row.type] || 'user'), original || english];
     if (english && original && english !== original) lines.push('', `In English: ${english}`);
-    lines.push('', `From Stonic's earlier memory${noted ? ` — first noted ${noted}` : ''}. ${meta.join(' · ')}.`);
+    lines.push('', `From Maya's earlier memory${noted ? ` — first noted ${noted}` : ''}. ${meta.join(' · ')}.`);
     const important = Boolean(row.pinned) || row.type === 'identity' || row.type === 'instruction';
     const when = Number(row.updated_at) || Number(row.recorded_at) || now;
     notes.push({ rel, text: lines.join('\n'), mtimeMs: important ? now : Math.min(when, now) });
@@ -365,10 +365,10 @@ function makeBackup({ accountDir, sources, now }) {
     if (copyIfExists(path.join(sources.legacyHermesDir, 'MEMORY.md'), path.join(dir, 'hermes-MEMORY.md'))) copied.push('hermes-MEMORY.md');
     if (copyIfExists(path.join(sources.legacyHermesDir, 'USER.md'), path.join(dir, 'hermes-USER.md'))) copied.push('hermes-USER.md');
   }
-  if (copyIfExists(sources.bootstrapMemory, path.join(dir, 'stonic-data-MEMORY.md'))) copied.push('stonic-data-MEMORY.md');
+  if (copyIfExists(sources.bootstrapMemory, path.join(dir, 'maya-data-MEMORY.md'))) copied.push('maya-data-MEMORY.md');
   if (copyIfExists(sources.memoriesJson, path.join(dir, 'memories.json'))) copied.push('memories.json');
   fs.writeFileSync(path.join(dir, 'README.txt'), [
-    `Copy of Stonic's earlier memory, made on ${dateTimeOf(now)} when memory moved to this folder.`,
+    `Copy of Maya's earlier memory, made on ${dateTimeOf(now)} when memory moved to this folder.`,
     'Nothing here is used anymore; it is kept only as a safety copy.',
     '',
     'memory.db holds every earlier conversation word for word (table "turns").',
@@ -383,7 +383,7 @@ function readLegacyFromBackup(openSqlite, backupDir) {
   const source = path.join(backupDir, 'memory.db');
   if (!fs.existsSync(source)) return { memories: [], intentions: [], episodes: [] };
   if (typeof openSqlite !== 'function') throw new Error('sqlite_unavailable');
-  const work = fs.mkdtempSync(path.join(os.tmpdir(), 'stonic-memory-move-'));
+  const work = fs.mkdtempSync(path.join(os.tmpdir(), 'maya-memory-move-'));
   try {
     const db = path.join(work, 'memory.db');
     fs.copyFileSync(source, db);

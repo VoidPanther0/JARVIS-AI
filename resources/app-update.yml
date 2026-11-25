@@ -1,4 +1,4 @@
 provider: generic
-url: https://updates.stonicai.com
+url: https://updates.mayaai.com
 channel: latest
-updaterCacheDirName: stonic_gen3-updater
+updaterCacheDirName: maya_gen3-updater

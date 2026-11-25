@@ -1,10 +1,10 @@
-// Awareness ki "aankhein" — Stonic ko pata ho ke PC par kya ho raha hai.
+// Awareness ki "aankhein" — Maya ko pata ho ke PC par kya ho raha hai.
 //
 // ════════════════════════════════════════════════════════════════════════════
 //  YE KYA HAI
 // ════════════════════════════════════════════════════════════════════════════
 //
-//  Stonic ka "khud bolna" (Proactive Presence) teen hisson mein hai:
+//  Maya ka "khud bolna" (Proactive Presence) teen hisson mein hai:
 //
 //    aankhein  -> ye file. Signals pakarti hai aur diary likhti hai. Koi model
 //                 nahi, koi network nahi — sab kuch isi machine par, muft.
@@ -32,7 +32,7 @@
 //
 //  Mouse/keyboard na hile to Windows usay idle ginta hai — chahe user saamne
 //  baitha film dekh raha ho. Pehle ye "uth gaya" ban jata tha, aur mouse hilate
-//  hi Stonic "wapas aa gaye?" poochta, jab ke wo gaya hi nahi tha. Ab watcher
+//  hi Maya "wapas aa gaye?" poochta, jab ke wo gaya hi nahi tha. Ab watcher
 //  batata hai ke koi app screen ko jagaye hue hai (video, presentation): tab
 //  tak user "dekh raha hai" — na uth gaya, na usay tokna hai.
 //
@@ -74,15 +74,15 @@ const FOCUS_INTERVAL_MS = 2000;
 // Call/meeting pehchanne ke liye: Windows batata hai kaun si app is lamhe mic
 // istemal kar rahi hai (awareness-focus-watch.js). Sirf ye apps "call" ginti hain
 // — messengers, meeting apps aur browsers (Meet, Zoom web, WhatsApp web).
-// Har mic wali app nahi: OBS se recording ya dictation ke dauran Stonic ka chup
+// Har mic wali app nahi: OBS se recording ya dictation ke dauran Maya ka chup
 // ho jana ghalat hota (aur demo video banana na-mumkin).
 const CALL_APPS = /zoom|teams|webex|skype|slack|discord|whatsapp|telegram|signal|viber|facetime|chrome|msedge|firefox|brave|opera|vivaldi|comet/i;
 const MAC_FOCUS_INTERVAL_MS = 8000;
 const WATCHER_MAX_RESTARTS = 4;
 const SCREENSHOT_MAX = { width: 1280, height: 800 };
 const LOG_MAX_BYTES = 1024 * 1024;
-// Stonic ki apni window ka naam — model aur dinon ke hisaab, dono ke liye.
-const OWN_APP_NAME = 'Stonic AI (this app)';
+// Maya ki apni window ka naam — model aur dinon ke hisaab, dono ke liye.
+const OWN_APP_NAME = 'Maya AI (this app)';
 
 class AwarenessManager {
   constructor({ userDataDir } = {}) {
@@ -148,7 +148,7 @@ class AwarenessManager {
     } catch { /* pehli dafa, ya file kharab — khali diary se shuru */ }
 
     // Ek process mein ek hi "khula" — setting baar baar on/off ho to diary mein
-    // har dafa "Stonic was opened" na likha jaye.
+    // har dafa "Maya was opened" na likha jaye.
     if (!this._startLogged) {
       this._startLogged = true;
       this.timeline.add({ t: this._bootAt, kind: 'start' });
@@ -273,7 +273,7 @@ class AwarenessManager {
     }
 
     if (!this._locked && !this._away && (idle < AWAY_AFTER_S || watching)) {
-      this.ledger.note(now, this._focus ? (this._focus.own ? 'Stonic' : this._focus.app) : '', delta);
+      this.ledger.note(now, this._focus ? (this._focus.own ? 'Maya' : this._focus.app) : '', delta);
       if (now - this._ledgerSavedAt >= LEDGER_SAVE_MS) {
         this._ledgerSavedAt = now;
         this._markDirty();
@@ -430,7 +430,7 @@ class AwarenessManager {
     const own = path.basename(process.execPath).toLowerCase();
     const caller = list.split('|')
       .map((name) => name.trim())
-      .filter((name) => name && name.toLowerCase() !== own && !/stonic/i.test(name))
+      .filter((name) => name && name.toLowerCase() !== own && !/maya/i.test(name))
       .find((name) => CALL_APPS.test(name));
     this._micInCallBy = caller ? caller.replace(/\.exe$/i, '').replace(/_[a-z0-9]{10,}$/i, '') : null;
   }
@@ -440,7 +440,7 @@ class AwarenessManager {
     this._setMic(raw.mic);
     if (typeof raw.display === 'boolean') this._screenAwake = raw.display;
     const now = Date.now();
-    // Stonic ki apni window: process ka naam dev mein "electron" hota hai, jo
+    // Maya ki apni window: process ka naam dev mein "electron" hota hai, jo
     // model ke liye be-maani hai.
     let ownWindow = false;
     try { ownWindow = Boolean(BrowserWindow.getFocusedWindow()); } catch { /* band ho rahi hai */ }
@@ -492,7 +492,7 @@ class AwarenessManager {
    *
    *   private window  -> jis cheez ka title hum model ko nahi dete, us ki
    *                      tasveer dena us se bhi bura hota.
-   *   Stonic ki apni  -> us tasveer mein Stonic ki apni baatein aur logs hote
+   *   Maya ki apni  -> us tasveer mein Maya ki apni baatein aur logs hote
    *   window             hain; test mein wo unhi par tabsra karne laga tha
    *                      ("Core Log keh raha hai…") — apne aap se baatein.
    *   lock
@@ -500,7 +500,7 @@ class AwarenessManager {
   async captureScreen() {
     if (!this.running) return { ok: false, error: 'awareness_off' };
     if (this._focus && this._focus.private) return { ok: false, error: 'private_window' };
-    if (this._focus && this._focus.own) return { ok: false, error: 'stonic_window' };
+    if (this._focus && this._focus.own) return { ok: false, error: 'maya_window' };
     if (this._locked) return { ok: false, error: 'locked' };
     try {
       const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());
@@ -520,7 +520,7 @@ class AwarenessManager {
    * Dimaagh ke faisle disk par — `awareness/awareness.log`, ek line fi faisla.
    *
    * Awareness peeche chalti hai aur dev ke bahar console nazar nahi aata; is
-   * file ke baghair "Stonic kyun nahi bola" ka jawab dhoondna mumkin nahi tha.
+   * file ke baghair "Maya kyun nahi bola" ka jawab dhoondna mumkin nahi tha.
    * 1 MB par purani file `.old` ban jati hai — ye kabhi barhti nahi rehti.
    */
   writeLog({ type, message, details } = {}) {

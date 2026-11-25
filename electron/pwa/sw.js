@@ -1,5 +1,5 @@
 // Service Worker for PWA offline support
-const CACHE_NAME = 'stonic-remote-v1';
+const CACHE_NAME = 'maya-remote-v1';
 const urlsToCache = [
     '/',
     '/index.html',

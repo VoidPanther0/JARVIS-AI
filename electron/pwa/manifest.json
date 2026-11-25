@@ -1,7 +1,7 @@
 {
-    "name": "Stonic Remote",
-    "short_name": "Stonic",
-    "description": "Remotely control your Stonic Desktop AI",
+    "name": "Maya Remote",
+    "short_name": "Maya",
+    "description": "Remotely control your Maya Desktop AI",
     "start_url": "/",
     "display": "fullscreen",
     "background_color": "#0c0d10",

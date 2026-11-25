@@ -8,7 +8,7 @@
 //      nahi aur wo click-through hai — agent ke clicks aar-paar jate hain.
 //  Ye HAR app ke upar dikhta hai — user chahe kisi bhi screen par ho.
 //
-//  Rendering ek alag Python process karta hai (stonic-computer/overlay_hud.py),
+//  Rendering ek alag Python process karta hai (maya-computer/overlay_hud.py),
 //  Electron ki window nahi. Wajah test se nikli: agent har step par screenshot
 //  leta hai, aur Electron ki transparent window ko screenshot se nikalne par
 //  (content protection) wo KAALI aa jati hai — agent andha. Windows ka layered
@@ -18,7 +18,7 @@
 //  Ye class state ki maalik hai: manager ke events ek chhote reducer se guzar
 //  kar poora snapshot Python ko jata hai (`{"cmd":"state"}`). Python ka
 //  `{"event":"stop"}` manager.stop() tak pohnchta hai: HUD par koi Stop button
-//  nahi, ye user ke ASLI keyboard ka Esc hai (stonic-computer/esc_guard.py —
+//  nahi, ye user ke ASLI keyboard ka Esc hai (maya-computer/esc_guard.py —
 //  agent ka apna dabaya hua Esc nahi ginta). Hook HUD ke process mein is liye
 //  hai ke "HUD dikh raha hai" aur "Esc rokta hai" hamesha ek saath sach hon.
 //  Baqi raaste: mouse hilana, Ctrl+Alt+Esc, voice, app ke title bar ka Stop.

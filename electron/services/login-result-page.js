@@ -5,7 +5,7 @@
 // mein chal rahi hoti thi aur wo browser takta rehta tha. Ab:
 //
 //   - onboarding ka andhera neela aur Barlow, magar saada: logo, ek jumla, aur
-//     ek bhara hua chamakta button — "Back to Stonic app" — jo app ko saamne
+//     ek bhara hua chamakta button — "Back to Maya app" — jo app ko saamne
 //     lata hai (main.js → bringAppForward). Pehli shakl (bara chakra, jaali,
 //     HUD kone) zyada lagi; safhe ka ek hi kaam hai, wo button (Usman, 17 Oct 2026).
 //
@@ -65,9 +65,9 @@ const loadAssets = () => {
 //   fail — nahi hua (wajah `message` mein)
 //   done — safha dobara khula (refresh) jab sign-in pehle hi nipat chuka
 const COPY = {
-  ok: { title: 'Signed in · Stonic', heading: "You're signed in", note: 'You can close this tab after that.' },
-  fail: { title: 'Sign-in failed · Stonic', heading: "Sign-in didn't work", note: 'You can close this tab after that.' },
-  done: { title: 'Stonic', heading: 'This page is finished', note: 'You can close this tab.' },
+  ok: { title: 'Signed in · Maya', heading: "You're signed in", note: 'You can close this tab after that.' },
+  fail: { title: 'Sign-in failed · Maya', heading: "Sign-in didn't work", note: 'You can close this tab after that.' },
+  done: { title: 'Maya', heading: 'This page is finished', note: 'You can close this tab.' },
 };
 
 const BADGE = {
@@ -79,7 +79,7 @@ const ARROW = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 
 
 /**
  * @param {{ kind: 'ok'|'fail'|'done', message?: string, email?: string, nonce?: string }} opts
- * `nonce`: "Back to Stonic app" isi ke saath app se baat karta hai. Na ho to button nahi.
+ * `nonce`: "Back to Maya app" isi ke saath app se baat karta hai. Na ho to button nahi.
  */
 const loginResultPage = ({ kind, message = '', email = '', nonce = '' }) => {
   const copy = COPY[kind] || COPY.done;
@@ -94,13 +94,13 @@ const loginResultPage = ({ kind, message = '', email = '', nonce = '' }) => {
   } else if (bad) {
     sub = `<i class="badge">${BADGE.fail}</i><span>${escapeHtml(message || 'Something went wrong.')}</span>`;
   } else {
-    sub = '<span>Go back to the Stonic app to continue.</span>';
+    sub = '<span>Go back to the Maya app to continue.</span>';
   }
 
   const action = nonce
-    ? `<button type="button" id="back" class="btn"><span>Back to Stonic app</span>${ARROW}</button>
+    ? `<button type="button" id="back" class="btn"><span>Back to Maya app</span>${ARROW}</button>
     <p class="note" id="note">${copy.note}</p>`
-    : `<p class="note" id="note">Go back to the Stonic app. ${copy.note}</p>`;
+    : `<p class="note" id="note">Go back to the Maya app. ${copy.note}</p>`;
 
   return `<!doctype html>
 <html lang="en">
@@ -223,7 +223,7 @@ h1 {
 </head>
 <body>
   <main>
-    ${logo ? `<img class="logo" src="${logo}" alt="Stonic" />` : ''}
+    ${logo ? `<img class="logo" src="${logo}" alt="Maya" />` : ''}
     <h1>${copy.heading}</h1>
     <p class="sub">${sub}</p>
     ${action}
@@ -237,10 +237,10 @@ ${nonce ? `<script>
     try {
       const res = await fetch('/return?n=' + ${JSON.stringify(encodeURIComponent(nonce))}, { method: 'POST' });
       if (!res.ok) throw new Error('not ok');
-      note.textContent = 'Stonic is open. You can close this tab now.';
+      note.textContent = 'Maya is open. You can close this tab now.';
       note.classList.add('is-done');
     } catch (e) {
-      note.textContent = 'Please open the Stonic app from your taskbar or Dock.';
+      note.textContent = 'Please open the Maya app from your taskbar or Dock.';
     } finally {
       setTimeout(() => { btn.disabled = false; }, 1500);
     }

@@ -17,7 +17,7 @@
 //  ye file wahin rehti hai. Naya version khulte hi `migrate()` dhaanche ko
 //  apne version tak le aata hai — purana data waise ka waisa.
 //
-//  Har Stonic account ka apna folder hai: ek hi PC par doosra shakhs sign in
+//  Har Maya account ka apna folder hai: ek hi PC par doosra shakhs sign in
 //  kare to usay pehle wale ki yaadein nahi milti. Wohi account dobara sign in
 //  kare (ya app dobara install ho) to usi folder par wapas aata hai.
 //
